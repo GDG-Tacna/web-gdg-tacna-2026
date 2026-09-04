@@ -1,0 +1,308 @@
+@import "tailwindcss";
+
+/* El tema se controla con la clase .dark en <html> (ver ThemeToggle y el
+   script anti-parpadeo de layout.tsx), no con prefers-color-scheme, para que
+   la preferencia del usuario pueda ganarle a la del sistema. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Tokens semánticos. Los componentes solo usan estos nombres, así el tema
+   claro y el oscuro se definen una sola vez y en un solo lugar.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  --canvas: #fbfbfd;
+  --panel: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f5fa;
+  --line: #e6e8f1;
+  --line-2: #cdd2e0;
+
+  --heading: #0a0c14;
+  --body: #363b4c;
+  --muted: #5d6376;
+  --faint: #8b91a3;
+
+  --solid: #0a0c14;
+  --on-solid: #ffffff;
+
+  /* Variantes legibles de los colores de Google sobre fondo claro */
+  --g-blue-ink: #1a56c4;
+  --g-red-ink: #b3261e;
+  --g-yellow-ink: #8a6100;
+  --g-green-ink: #1e7e34;
+  --violet-ink: #6d28d9;
+
+  --glass-bg: #ffffff;
+  --glass-shadow:
+    0 1px 2px rgb(16 24 40 / 0.04), 0 12px 28px -14px rgb(16 24 40 / 0.14);
+  --net-line: rgb(10 12 20 / 0.07);
+  --net-node: rgb(10 12 20 / 0.16);
+  --text-gradient: linear-gradient(
+    100deg,
+    #0a0c14 0%,
+    #2b3654 28%,
+    #6d28d9 66%,
+    #1a56c4 100%
+  );
+}
+
+.dark {
+  color-scheme: dark;
+
+  --canvas: #05060b;
+  --panel: #090b13;
+  --surface: rgb(255 255 255 / 0.03);
+  --surface-2: rgb(255 255 255 / 0.055);
+  --line: rgb(255 255 255 / 0.09);
+  --line-2: rgb(255 255 255 / 0.18);
+
+  --heading: #ffffff;
+  --body: rgb(255 255 255 / 0.72);
+  --muted: rgb(255 255 255 / 0.52);
+  --faint: rgb(255 255 255 / 0.36);
+
+  --solid: #ffffff;
+  --on-solid: #05060b;
+
+  /* Paleta oscura oficial de Google: los tonos vivos no contrastan sobre negro */
+  --g-blue-ink: #8ab4f8;
+  --g-red-ink: #f28b82;
+  --g-yellow-ink: #fdd663;
+  --g-green-ink: #81c995;
+  --violet-ink: #b39bff;
+
+  --glass-bg: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.055),
+    rgb(255 255 255 / 0.02)
+  );
+  --glass-shadow: none;
+  --net-line: rgb(255 255 255 / 0.06);
+  --net-node: rgb(255 255 255 / 0.16);
+  --text-gradient: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #dbe4ff 34%,
+    #8b5cf6 68%,
+    #22d3ee 100%
+  );
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-panel: var(--panel);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+
+  --color-heading: var(--heading);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+
+  --color-solid: var(--solid);
+  --color-on-solid: var(--on-solid);
+
+  --color-g-blue-ink: var(--g-blue-ink);
+  --color-g-red-ink: var(--g-red-ink);
+  --color-g-yellow-ink: var(--g-yellow-ink);
+  --color-g-green-ink: var(--g-green-ink);
+  --color-violet-ink: var(--violet-ink);
+}
+
+@theme {
+  /* Colores de marca: idénticos en ambos temas (puntos, degradados, avatares) */
+  --color-g-blue: #4285f4;
+  --color-g-red: #ea4335;
+  --color-g-yellow: #fbbc04;
+  --color-g-green: #34a853;
+  --color-brand-violet: #8b5cf6;
+  --color-brand-cyan: #22d3ee;
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--body);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand-violet) 30%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-g-blue);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--canvas);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-2);
+    border-radius: 999px;
+    border: 2px solid var(--canvas);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--faint);
+  }
+}
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Tarjeta base: translúcida en oscuro, sólida con sombra suave en claro */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--line);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .text-gradient {
+    background: var(--text-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hairline {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--line-2) 20%,
+      var(--line-2) 80%,
+      transparent
+    );
+  }
+}
+
+@layer utilities {
+  /* La red de nodos se aclara donde va el título y se apaga en el borde
+     exterior: dos máscaras radiales que se intersecan. */
+  .mask-constellation {
+    -webkit-mask-image:
+      radial-gradient(ellipse 62% 50% at 50% 42%, transparent 12%, #000 78%),
+      radial-gradient(ellipse 95% 92% at 50% 42%, #000 45%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(ellipse 62% 50% at 50% 42%, transparent 12%, #000 78%),
+      radial-gradient(ellipse 95% 92% at 50% 42%, #000 45%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* Solo opacidad: mover o escalar una capa con blur de 110px obliga a
+     re-rasterizarla en cada frame. */
+  .animate-aurora {
+    animation: aurora 14s ease-in-out infinite;
+  }
+  .animate-aurora-slow {
+    animation: aurora 20s ease-in-out infinite reverse;
+  }
+  .animate-sheen {
+    animation: sheen 3.2s ease-in-out infinite;
+  }
+  .animate-pulse-ring {
+    animation: pulse-ring 2.6s ease-out infinite;
+  }
+}
+
+@keyframes aurora {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes sheen {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Aparición al hacer scroll (ver components/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-aurora,
+  .animate-aurora-slow,
+  .animate-sheen,
+  .animate-pulse-ring {
+    animation: none !important;
+  }
+}
