@@ -1,31 +1,45 @@
 import { Reveal } from "./Reveal";
 
 type SectionHeadingProps = {
+  /** Número de sección ("01", "02"…). Ordena la lectura y da el color del acento. */
+  index: string;
   eyebrow: string;
   title: string;
   description?: string;
   align?: "center" | "left";
 };
 
+/** Acento por sección, rotando los colores de la marca. */
+const acentos = [
+  "text-g-blue-ink",
+  "text-g-red-ink",
+  "text-g-yellow-ink",
+  "text-g-green-ink",
+  "text-violet-ink",
+];
+
 export function SectionHeading({
+  index,
   eyebrow,
   title,
   description,
   align = "center",
 }: SectionHeadingProps) {
   const centered = align === "center";
+  const acento = acentos[(Number(index) - 1 + acentos.length) % acentos.length];
 
   return (
     <div
-      className={`flex flex-col gap-4 ${
+      className={`flex flex-col gap-5 ${
         centered ? "items-center text-center" : "items-start text-left"
       }`}
     >
       <Reveal>
-        <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.18em] text-muted uppercase">
-          <span className="size-1.5 rounded-full bg-g-green" />
-          {eyebrow}
-        </span>
+        <p className="font-display flex items-center gap-3 text-[11px] font-semibold tracking-[0.28em] uppercase">
+          <span className={acento}>{index}</span>
+          <span aria-hidden className="h-px w-7 bg-line-2" />
+          <span className="text-muted">{eyebrow}</span>
+        </p>
       </Reveal>
 
       <Reveal delay={80}>

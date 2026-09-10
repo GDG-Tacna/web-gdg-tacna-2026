@@ -1,9 +1,11 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
+import { Pending } from "./Pending";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { speakers, type Speaker } from "@/data/speakers";
 
-/** Paleta por avatar, derivada del nombre para que sea estable entre renders. */
+/** Paleta por avatar, asignada por posición para que la grilla no salga monocroma. */
 const palettes = [
   "from-g-blue/80 to-brand-violet/70",
   "from-g-green/80 to-g-blue/60",
@@ -11,11 +13,6 @@ const palettes = [
   "from-g-yellow/70 to-g-red/60",
   "from-brand-cyan/70 to-g-blue/70",
 ];
-
-function paletteFor(name: string) {
-  const sum = [...name].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return palettes[sum % palettes.length];
-}
 
 function initials(name: string) {
   return name
@@ -27,7 +24,7 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function SpeakerCard({ speaker }: { speaker: Speaker }) {
+function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-surface p-2.5 transition-all duration-300 hover:-translate-y-1 hover:border-line-2 hover:bg-surface-2">
       <div className="relative aspect-4/5 overflow-hidden rounded-2xl">
@@ -41,9 +38,9 @@ function SpeakerCard({ speaker }: { speaker: Speaker }) {
           />
         ) : (
           <div
-            className={`flex size-full items-center justify-center bg-gradient-to-br ${paletteFor(
-              speaker.name,
-            )}`}
+            className={`flex size-full items-center justify-center bg-gradient-to-br ${
+              palettes[index % palettes.length]
+            }`}
           >
             <span className="font-display text-4xl font-bold text-white/90 sm:text-5xl">
               {initials(speaker.name)}
@@ -82,36 +79,36 @@ export function Speakers() {
   return (
     <section
       id="speakers"
-      className="relative scroll-mt-28 overflow-hidden py-24 sm:py-32"
+      className="relative overflow-hidden py-24 sm:py-32"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/4 left-1/2 -z-10 size-[42rem] -translate-x-1/2 rounded-full bg-brand-violet/6 blur-[160px] dark:bg-brand-violet/8"
+        className="aurora pointer-events-none top-0 left-1/2 -z-10 size-[56rem] -translate-x-1/2"
+        style={{ "--aurora-rgb": "139 92 246", "--aurora-a": 0.1 } as CSSProperties}
       />
 
       <div className="shell">
         <SectionHeading
+          index="02"
           eyebrow="Speakers"
           title="Quienes compartirán su experiencia contigo"
-          description="Ingenieros, GDEs y líderes técnicos de la región contando cómo resuelven problemas reales en producción."
+          description="Ingenieros, GDEs y líderes técnicos contando cómo resuelven problemas reales en producción."
         />
 
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-          {speakers.map((speaker, index) => (
-            <Reveal key={speaker.name} delay={Math.min(index * 60, 300)}>
-              <SpeakerCard speaker={speaker} />
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal>
-          <p className="mt-10 text-center text-[13px] text-faint">
-            Seguimos confirmando speakers.{" "}
-            <span className="text-body">
-              El line-up completo se anuncia en octubre.
-            </span>
-          </p>
-        </Reveal>
+        {speakers.length === 0 ? (
+          <Pending>
+            Estamos cerrando el line-up. Anunciaremos a los speakers aquí y en
+            las redes de la comunidad.
+          </Pending>
+        ) : (
+          <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+            {speakers.map((speaker, index) => (
+              <Reveal key={index} delay={Math.min(index * 60, 300)}>
+                <SpeakerCard speaker={speaker} index={index} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

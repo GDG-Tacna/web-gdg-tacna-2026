@@ -1,39 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { MouseEvent } from "react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { site } from "@/lib/site";
 
+/**
+ * Cierra el desplegable tras pulsar un enlace. Es una mejora, no un requisito:
+ * si el JS no corre, el <details> sigue abriéndose y los enlaces siguen
+ * navegando; simplemente hay que cerrarlo con la X.
+ */
+function cerrarMenu(event: MouseEvent<HTMLAnchorElement>) {
+  event.currentTarget.closest("details")?.removeAttribute("open");
+}
+
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Evita el scroll del fondo mientras el menú móvil está abierto.
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
   return (
     <header className="fixed inset-x-0 top-0 z-50 pt-3 sm:pt-5">
-      <div className="shell">
+      <div className="shell relative">
+        {/* El fondo lo pinta .nav-pill::before, no una clase condicional: ver
+            globals.css. Así no depende de que React hidrate. */}
         <nav
           aria-label="Principal"
-          className={`flex items-center justify-between gap-4 rounded-full border px-3 py-2.5 transition-all duration-500 sm:px-4 ${
-            scrolled
-              ? "border-line bg-canvas/80 shadow-[0_10px_40px_-14px_rgb(10_12_20/0.18)] backdrop-blur-xl dark:shadow-[0_10px_40px_-12px_rgb(0_0_0/0.9)]"
-              : "border-transparent bg-transparent"
-          }`}
+          className="nav-pill flex items-center justify-between gap-4 rounded-full px-3 py-2.5 sm:px-4"
         >
           <a
             href="#top"
@@ -43,7 +32,7 @@ export function Navbar() {
             <Logo />
           </a>
 
-          <ul className="hidden items-center gap-1 md:flex">
+          <ul className="hidden items-center gap-1 lg:flex">
             {site.nav.map((item) => (
               <li key={item.href}>
                 <a
@@ -60,73 +49,60 @@ export function Navbar() {
             <ThemeToggle />
 
             <a
-              href="#entradas"
+              href={site.registerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hidden rounded-full bg-solid px-5 py-2.5 text-sm font-semibold text-on-solid transition-transform hover:scale-[1.03] active:scale-95 sm:inline-flex"
             >
               Regístrate
             </a>
 
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-controls="menu-movil"
-              aria-label={open ? "Cerrar menú" : "Abrir menú"}
-              className="grid size-10 place-items-center rounded-full border border-line bg-surface text-heading transition-colors hover:bg-surface-2 md:hidden"
-            >
-              <span className="relative block h-3.5 w-4">
-                <span
-                  className={`absolute left-0 block h-[1.5px] w-4 rounded bg-current transition-all duration-300 ${
-                    open ? "top-1.5 rotate-45" : "top-0"
-                  }`}
-                />
-                <span
-                  className={`absolute top-1.5 left-0 block h-[1.5px] w-4 rounded bg-current transition-all duration-200 ${
-                    open ? "opacity-0" : "opacity-100"
-                  }`}
-                />
-                <span
-                  className={`absolute left-0 block h-[1.5px] w-4 rounded bg-current transition-all duration-300 ${
-                    open ? "top-1.5 -rotate-45" : "top-3"
-                  }`}
-                />
-              </span>
-            </button>
+            {/*
+              Es un <details> y no estado de React a propósito: la navegación es
+              lo último que puede permitirse depender de que el bundle cargue e
+              hidrate. Así abre, cierra y navega con HTML puro.
+            */}
+            <details className="menu lg:hidden">
+              <summary
+                aria-label="Menú de navegación"
+                className="grid size-10 cursor-pointer place-items-center rounded-full border border-line bg-surface text-heading transition-colors hover:bg-surface-2"
+              >
+                <span aria-hidden className="relative block h-3.5 w-4">
+                  <span className="menu-bar menu-bar-top" />
+                  <span className="menu-bar menu-bar-mid" />
+                  <span className="menu-bar menu-bar-bottom" />
+                </span>
+              </summary>
+
+              <div className="menu-panel absolute inset-x-5 top-full mt-2 md:inset-x-8 overflow-hidden rounded-3xl border border-line bg-panel shadow-[0_16px_40px_-16px_rgb(10_12_20/0.35)] dark:shadow-[0_16px_40px_-12px_rgb(0_0_0/0.85)]">
+                <ul className="flex flex-col p-2">
+                  {site.nav.map((item) => (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        onClick={cerrarMenu}
+                        className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-body transition-colors hover:bg-surface-2 hover:text-heading"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                  <li className="p-2">
+                    <a
+                      href={site.registerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={cerrarMenu}
+                      className="block rounded-2xl bg-solid px-4 py-3 text-center text-[15px] font-semibold text-on-solid"
+                    >
+                      Regístrate
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </details>
           </div>
         </nav>
-
-        {/* Menú móvil */}
-        <div
-          id="menu-movil"
-          className={`glass mt-2 overflow-hidden rounded-3xl transition-all duration-300 md:hidden ${
-            open
-              ? "max-h-96 opacity-100"
-              : "pointer-events-none max-h-0 border-transparent opacity-0"
-          }`}
-        >
-          <ul className="flex flex-col p-2">
-            {site.nav.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-body transition-colors hover:bg-surface-2 hover:text-heading"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-            <li className="p-2">
-              <a
-                href="#entradas"
-                onClick={() => setOpen(false)}
-                className="block rounded-2xl bg-solid px-4 py-3 text-center text-[15px] font-semibold text-on-solid"
-              >
-                Regístrate
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
     </header>
   );

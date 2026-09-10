@@ -67,129 +67,133 @@ export type AgendaItem = {
   speaker?: { name: string; role: string };
 };
 
-/** TODO: datos de ejemplo. Reemplazar con la agenda oficial. */
+/**
+ * Estructura del día con el contenido sin confirmar.
+ *
+ * Las horas, duraciones y tracks son la maqueta real; los títulos,
+ * descripciones, speakers y salas son placeholder a propósito. Todas las
+ * charlas comparten el mismo texto para que se distinga de un vistazo lo que
+ * falta por completar; las pausas sí llevan su nombre real porque son bloques
+ * ciertos del día. Si se vacía el array, la sección pasa sola a su estado
+ * "por confirmar".
+ */
+const TITULO = "Lorem ipsum dolor sit amet";
+const DESCRIPCION =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.";
+
 export const agenda: AgendaItem[] = [
   {
     time: "09:00",
     duration: "30 min",
     title: "Registro y bienvenida",
-    description: "Acreditación, café de cortesía y networking de apertura.",
+    description: "Acreditación de asistentes.",
     track: "break",
-    room: "Hall principal",
+    room: "TBD",
   },
   {
     time: "09:30",
     duration: "20 min",
-    title: "Apertura: la comunidad tech de Tacna",
-    description:
-      "Bienvenida al DevFest Tacna 2026 y un vistazo a lo que viene para la comunidad este año.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "keynote",
-    room: "Auditorio A",
-    speaker: { name: "Equipo GDG Tacna", role: "Organizadores" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "09:50",
     duration: "40 min",
-    title: "Agentes de IA en producción: del prototipo al usuario real",
-    description:
-      "Arquitecturas, costos y guardrails para llevar un agente LLM de la demo al día a día de tu producto.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "ia",
-    room: "Auditorio A",
-    speaker: { name: "Valeria Quispe", role: "ML Engineer · Nubify" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "10:30",
     duration: "40 min",
-    title: "React Server Components sin dolor",
-    description:
-      "Qué cambia realmente en tu arquitectura front-end y cómo migrar una app existente por partes.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "web",
-    room: "Auditorio A",
-    speaker: { name: "Diego Mamani", role: "GDE Web · Kunan Labs" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "11:10",
     duration: "20 min",
     title: "Pausa para el café",
-    description: "Networking, stands de sponsors y fotos con la comunidad.",
+    description: "Networking y stands de sponsors.",
     track: "break",
-    room: "Hall principal",
+    room: "TBD",
   },
   {
     time: "11:30",
     duration: "40 min",
-    title: "Flutter multiplataforma: una base de código, cinco pantallas",
-    description:
-      "Estrategias de diseño adaptativo para móvil, tablet, web y escritorio sin duplicar trabajo.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "mobile",
-    room: "Auditorio A",
-    speaker: { name: "Camila Rojas", role: "Lead Mobile · Andes Software" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "12:10",
     duration: "40 min",
-    title: "Cloud Run + Firebase: infra que escala mientras duermes",
-    description:
-      "Un backend serverless completo, con observabilidad y despliegue continuo, explicado paso a paso.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "cloud",
-    room: "Auditorio A",
-    speaker: { name: "Renzo Ticona", role: "Cloud Architect · Sierra Cloud" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "12:50",
     duration: "60 min",
-    title: "Almuerzo libre",
-    description: "Recomendaciones de la organización y mapa de la zona.",
+    title: "Almuerzo",
+    description: "Pausa para almorzar.",
     track: "break",
-    room: "Campus UTP",
+    room: "TBD",
   },
   {
     time: "14:00",
     duration: "90 min",
-    title: "Workshop: construye tu primer agente con Gemini",
-    description:
-      "Taller práctico. Trae tu laptop: saldrás con un agente funcionando y desplegado.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "ia",
-    room: "Laboratorio 2",
-    speaker: { name: "Ana Lucía Flores", role: "AI Advocate · Tacna Data" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "15:30",
     duration: "40 min",
-    title: "Core Web Vitals: performance que el usuario sí nota",
-    description:
-      "Cómo medir, priorizar y arreglar lo que realmente mueve la aguja en tu producto web.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "web",
-    room: "Auditorio A",
-    speaker: { name: "Sofía Cárdenas", role: "Frontend Lead · Altiplano" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "16:10",
     duration: "20 min",
     title: "Pausa de la tarde",
-    description: "Último round de networking antes del cierre.",
+    description: "Último espacio de networking antes del cierre.",
     track: "break",
-    room: "Hall principal",
+    room: "TBD",
   },
   {
     time: "16:30",
     duration: "30 min",
-    title: "Kotlin Multiplatform en equipos pequeños",
-    description:
-      "Cómo un equipo de tres personas mantiene apps Android e iOS compartiendo el 70% del código.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "mobile",
-    room: "Auditorio A",
-    speaker: { name: "Jorge Huanca", role: "Android Engineer · Vicuña" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
   {
     time: "17:00",
     duration: "30 min",
-    title: "Keynote de clausura, premios y cierre",
-    description:
-      "Resumen del día, sorteos con los sponsors y foto oficial de la comunidad.",
+    title: TITULO,
+    description: DESCRIPCION,
     track: "keynote",
-    room: "Auditorio A",
-    speaker: { name: "Equipo GDG Tacna", role: "Organizadores" },
+    room: "TBD",
+    speaker: { name: "TBD", role: "TBD" },
   },
 ];
 

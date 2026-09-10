@@ -1,19 +1,16 @@
+import type { CSSProperties } from "react";
 import { Logo } from "./Logo";
 import { site } from "@/lib/site";
-
-const socials = [
-  { label: "LinkedIn", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "X", href: "#" },
-  { label: "YouTube", href: "#" },
-];
 
 export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-line pt-16 pb-10">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-g-blue/6 blur-[150px] dark:bg-g-blue/8"
+        className="aurora pointer-events-none -top-72 left-1/2 size-[52rem] -translate-x-1/2"
+        style={
+          { "--aurora-rgb": "66 133 244", "--aurora-a": 0.1 } as CSSProperties
+        }
       />
 
       <div className="shell relative">
@@ -23,9 +20,6 @@ export function Footer() {
             <p className="mt-5 text-[13.5px] leading-relaxed text-muted">
               {site.tagline}. Organizado por {site.organizer}, parte de la red
               global de Google Developer Groups.
-            </p>
-            <p className="mt-5 text-[13px] text-faint">
-              {site.dateShort} · {site.venue} · {site.city}
             </p>
           </div>
 
@@ -53,11 +47,12 @@ export function Footer() {
                 Comunidad
               </h3>
               <ul className="mt-4 flex flex-col gap-3">
-                {socials.map((social) => (
+                {site.socials.map((social) => (
                   <li key={social.label}>
-                    {/* TODO: enlazar las redes reales de GDG Tacna */}
                     <a
                       href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-[13.5px] text-muted transition-colors hover:text-heading"
                     >
                       {social.label}

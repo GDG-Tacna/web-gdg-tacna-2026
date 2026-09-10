@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Speakers } from "@/components/Speakers";
 import { Sponsors } from "@/components/Sponsors";
 import { Tickets } from "@/components/Tickets";
+import { Volunteers } from "@/components/Volunteers";
 
 function Divider() {
   return (
@@ -25,6 +26,8 @@ export default function Home() {
         <Speakers />
         <Divider />
         <Tickets />
+        <Divider />
+        <Volunteers />
         <Divider />
         <Sponsors />
       </main>

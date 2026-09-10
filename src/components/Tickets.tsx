@@ -1,6 +1,6 @@
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
-import { CheckIcon } from "./icons";
+import { ArrowIcon, CheckIcon } from "./icons";
 import { plans, type Plan } from "@/data/tickets";
 import { site } from "@/lib/site";
 
@@ -31,15 +31,10 @@ function PlanCard({ plan }: { plan: Plan }) {
         {plan.description}
       </p>
 
-      <div className="mt-7 flex flex-wrap items-end gap-3">
+      <div className="mt-7">
         <span className="font-display bg-gradient-to-br from-heading to-muted bg-clip-text text-5xl leading-none font-bold tracking-tight text-transparent sm:text-6xl">
           {plan.price}
         </span>
-        {plan.compareAt && (
-          <span className="mb-1.5 text-[13px] text-faint line-through">
-            {plan.compareAt}
-          </span>
-        )}
       </div>
       <p className="mt-2 text-[12.5px] text-faint">{plan.priceNote}</p>
 
@@ -58,21 +53,36 @@ function PlanCard({ plan }: { plan: Plan }) {
       </ul>
 
       <div className="mt-auto flex flex-col gap-3 pt-9">
-        {/* Sin funcionalidad por ahora: el registro se habilita después. */}
-        <button
-          type="button"
-          aria-disabled="true"
-          className={`w-full rounded-full px-6 py-4 text-[15px] font-semibold transition-transform hover:scale-[1.01] active:scale-[0.99] ${
-            plan.featured
-              ? "bg-solid text-on-solid"
-              : "border border-line-2 bg-transparent text-heading hover:bg-surface-2"
-          }`}
-        >
-          {plan.cta}
-        </button>
-        <p className="text-center text-[12px] text-faint">
-          Las inscripciones abren pronto.
-        </p>
+        {plan.href ? (
+          <a
+            href={plan.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`group/cta inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-semibold transition-transform hover:scale-[1.01] active:scale-[0.99] ${
+              plan.featured
+                ? "bg-solid text-on-solid"
+                : "border border-line-2 text-heading hover:bg-surface-2"
+            }`}
+          >
+            {plan.cta}
+            <ArrowIcon className="transition-transform group-hover/cta:translate-x-1" />
+          </a>
+        ) : (
+          // Sin destino todavía: el botón queda inerte a propósito.
+          <button
+            type="button"
+            aria-disabled="true"
+            className={`w-full rounded-full px-6 py-4 text-[15px] font-semibold ${
+              plan.featured
+                ? "bg-surface-2 text-muted"
+                : "border border-line text-muted"
+            }`}
+          >
+            {plan.cta}
+          </button>
+        )}
+
+        <p className="text-center text-[12px] text-faint">{plan.ctaNote}</p>
       </div>
     </div>
   );
@@ -86,7 +96,7 @@ function PlanCard({ plan }: { plan: Plan }) {
     <div className="group relative h-full rounded-4xl p-[1.5px]">
       <div
         aria-hidden
-        className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-g-blue/20 via-brand-violet/20 to-g-green/15 opacity-70 blur-[60px] transition-opacity duration-500 group-hover:opacity-100"
+        className="absolute -inset-10 -z-10 rounded-[4rem] bg-[radial-gradient(closest-side,rgb(139_92_246/0.22),rgb(66_133_244/0.12)_55%,transparent)] opacity-70 transition-opacity duration-500 group-hover:opacity-100"
       />
       <div
         aria-hidden
@@ -101,13 +111,14 @@ export function Tickets() {
   return (
     <section
       id="entradas"
-      className="relative scroll-mt-28 overflow-hidden py-24 sm:py-32"
+      className="relative overflow-hidden py-24 sm:py-32"
     >
       <div className="shell">
         <SectionHeading
+          index="03"
           eyebrow="Entradas"
           title="Elige tu experiencia DevFest"
-          description="Entra gratis a toda la conferencia, o suma el Pase Pro si quieres el workshop asegurado y el día completo resuelto."
+          description="La conferencia es gratuita. Estamos preparando además una experiencia premium con merch del evento."
         />
 
         <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-2">

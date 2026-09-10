@@ -42,10 +42,17 @@ export const viewport: Viewport = {
 };
 
 /**
- * Se ejecuta antes de pintar: aplica el tema guardado (o el del sistema) para
- * que la página no aparezca en claro y salte a oscuro.
+ * Se ejecuta antes de pintar. Hace dos cosas:
+ *
+ * 1. Aplica el tema guardado (o el del sistema) para que la página no aparezca
+ *    en claro y salte a oscuro.
+ * 2. Marca <html class="js"> y monta el observador del reveal. Va aquí y no en
+ *    React a propósito: el CSS oculta los bloques con `.js .reveal`, así que si
+ *    esperáramos a la hidratación, en un móvil con red lenta la página se vería
+ *    vacía durante segundos. Así aparecen en cuanto se parsea el HTML, y si el
+ *    JS falla del todo el contenido nunca llega a ocultarse.
  */
-const themeScript = `
+const bootScript = `
 try {
   var stored = localStorage.getItem('theme');
   var dark = stored ? stored === 'dark'
@@ -53,6 +60,42 @@ try {
   document.documentElement.classList.toggle('dark', dark);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
 } catch (e) {}
+
+document.documentElement.classList.add('js');
+
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var io = null;
+
+  function show(el) { el.classList.add('is-visible'); }
+
+  function track(root) {
+    var nodes = root.querySelectorAll('.reveal');
+    for (var i = 0; i < nodes.length; i++) {
+      if (io) io.observe(nodes[i]); else show(nodes[i]);
+    }
+  }
+
+  function start() {
+    if (!reduce && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            show(entries[i].target);
+            io.unobserve(entries[i].target);
+          }
+        }
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }
+    track(document);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
 `;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -63,7 +106,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body className="min-h-full">{children}</body>
     </html>

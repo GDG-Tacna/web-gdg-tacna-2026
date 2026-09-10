@@ -4,8 +4,6 @@ export type Plan = {
   name: string;
   description: string;
   price: string;
-  /** Precio tachado al lado, para mostrar el descuento de preventa. */
-  compareAt?: string;
   priceNote: string;
   /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado"). */
   highlight?: string;
@@ -13,9 +11,17 @@ export type Plan = {
   includesTitle: string;
   includes: string[];
   cta: string;
+  /** Aclaración bajo el botón: adónde lleva o por qué no lleva a ningún lado. */
+  ctaNote: string;
+  /**
+   * Destino del botón. Si falta, el botón queda inerte: todavía no hay dónde
+   * registrarse para ese plan.
+   */
+  href?: string;
 };
 
-/** TODO: datos de ejemplo. Confirmar precio, cupos y beneficios reales. */
+import { site } from "@/lib/site";
+
 export const plans: Plan[] = [
   {
     id: "general",
@@ -24,37 +30,37 @@ export const plans: Plan[] = [
     description:
       "Todo el track principal del día, sin costo. Es la entrada con la que la mayoría vive el DevFest.",
     price: "Gratis",
-    priceNote: "Cupos por orden de registro",
+    priceNote: "Registro por Luma · cupos por orden de llegada",
     includesTitle: "Qué incluye:",
     includes: [
       "Acceso a todas las charlas del día",
       "Zona de sponsors y espacios de networking",
-      "Kit de bienvenida y stickers de la comunidad",
-      "Coffee break de la mañana",
-      "Certificado digital de participación",
+      // TODO: añadir el resto de beneficios cuando estén confirmados
+      "Resto de beneficios por confirmar",
     ],
-    cta: "Reserva tu lugar",
+    cta: "Regístrate gratis",
+    ctaNote: "El registro se completa en Luma.",
+    href: site.registerUrl,
   },
   {
-    id: "pro",
-    badge: "Pase Pro",
-    name: "Conferencia + workshop garantizado",
+    id: "premium",
+    badge: "Experiencia premium",
+    name: "Llévate el merch del DevFest",
     description:
-      "Para quienes vienen por el taller práctico y quieren el día resuelto de principio a fin.",
-    price: "S/ 89",
-    compareAt: "S/ 140",
-    priceNote: "Precio de preventa hasta el 31 de octubre",
-    highlight: "Recomendado",
+      "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
+    // TODO: definir precio y disponibilidad
+    price: "TBD",
+    priceNote: "Precio y disponibilidad por confirmar",
+    highlight: "En preparación",
     featured: true,
     includesTitle: "Todo lo de la entrada general, más:",
     includes: [
-      "Cupo garantizado en el workshop práctico",
-      "Almuerzo y coffee breaks incluidos",
-      "Asiento preferente en el auditorio",
-      "Polo de edición limitada DevFest Tacna 2026",
-      "Afterparty con speakers y organizadores",
-      "Certificado con horas acreditadas",
+      "Polo del DevFest Tacna 2026",
+      "Bolsa de regalos de los sponsors",
+      "Beneficios adicionales por confirmar",
     ],
-    cta: "Quiero el Pase Pro",
+    cta: "Contáctanos",
+    ctaNote: "Se abre un chat de WhatsApp.",
+    href: site.whatsappTickets,
   },
 ];

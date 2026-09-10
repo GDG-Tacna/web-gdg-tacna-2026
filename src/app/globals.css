@@ -37,6 +37,7 @@
   --glass-bg: #ffffff;
   --glass-shadow:
     0 1px 2px rgb(16 24 40 / 0.04), 0 12px 28px -14px rgb(16 24 40 / 0.14);
+  --aurora-strength: 0.5;
   --net-line: rgb(10 12 20 / 0.07);
   --net-node: rgb(10 12 20 / 0.16);
   --text-gradient: linear-gradient(
@@ -79,6 +80,7 @@
     rgb(255 255 255 / 0.02)
   );
   --glass-shadow: none;
+  --aurora-strength: 1;
   --net-line: rgb(255 255 255 / 0.06);
   --net-node: rgb(255 255 255 / 0.16);
   --text-gradient: linear-gradient(
@@ -131,7 +133,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 6.5rem;
+    /* Único desplazamiento al saltar a un ancla. Va pequeño a propósito: las
+       secciones ya traen su propio padding superior (py-24 sm:py-32), que es
+       más que suficiente para que la navbar fija no tape nada. Antes esto valía
+       6.5rem y además cada sección llevaba scroll-mt-28; ambos se suman, así
+       que el contenido acababa 260px por debajo de la navbar. */
+    scroll-padding-top: 1rem;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -190,6 +197,18 @@
     box-shadow: var(--glass-shadow);
   }
 
+  .aurora {
+    position: absolute;
+    border-radius: 50%;
+    --alpha: calc(var(--aurora-a) * var(--aurora-strength));
+    background: radial-gradient(
+      closest-side,
+      rgb(var(--aurora-rgb) / var(--alpha)),
+      rgb(var(--aurora-rgb) / calc(var(--alpha) * 0.34)) 55%,
+      transparent 100%
+    );
+  }
+
   .text-gradient {
     background: var(--text-gradient);
     -webkit-background-clip: text;
@@ -209,36 +228,43 @@
 }
 
 @layer utilities {
-  /* La red de nodos se aclara donde va el título y se apaga en el borde
-     exterior: dos máscaras radiales que se intersecan. */
+  /* Los nodos ya evitan la franja del título, así que sobra componer dos
+     máscaras: basta con apagar el borde exterior. */
   .mask-constellation {
-    -webkit-mask-image:
-      radial-gradient(ellipse 62% 50% at 50% 42%, transparent 12%, #000 78%),
-      radial-gradient(ellipse 95% 92% at 50% 42%, #000 45%, transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      radial-gradient(ellipse 62% 50% at 50% 42%, transparent 12%, #000 78%),
-      radial-gradient(ellipse 95% 92% at 50% 42%, #000 45%, transparent 100%);
-    mask-composite: intersect;
+    -webkit-mask-image: radial-gradient(
+      ellipse 92% 88% at 50% 42%,
+      #000 40%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 92% 88% at 50% 42%,
+      #000 40%,
+      transparent 100%
+    );
   }
 
   .bg-noise {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-image: none;
   }
 
-  /* Solo opacidad: mover o escalar una capa con blur de 110px obliga a
-     re-rasterizarla en cada frame. */
-  .animate-aurora {
-    animation: aurora 14s ease-in-out infinite;
+  @media (min-width: 768px) {
+    .bg-noise {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    }
   }
-  .animate-aurora-slow {
-    animation: aurora 20s ease-in-out infinite reverse;
+
+  /* Repinta una capa del tamaño del hero, así que solo en pantallas
+     grandes; en móvil las auroras se quedan estáticas. */
+  @media (min-width: 768px) {
+    .animate-aurora {
+      animation: aurora 14s ease-in-out infinite;
+    }
+    .animate-aurora-slow {
+      animation: aurora 20s ease-in-out infinite reverse;
+    }
   }
   .animate-sheen {
     animation: sheen 3.2s ease-in-out infinite;
-  }
-  .animate-pulse-ring {
-    animation: pulse-ring 2.6s ease-out infinite;
   }
 }
 
@@ -262,22 +288,118 @@
   }
 }
 
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
-  70% {
-    transform: scale(1.9);
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
+/* Píldora del nav. El fondo vive en una capa aparte y es visible por defecto,
+   porque ese es el estado legible: antes dependía de estado de React, así que
+   en un dispositivo donde el bundle no hidrata el nav se quedaba transparente
+   encima del contenido. Donde el navegador soporta animaciones ligadas al
+   estado legible en cualquier dispositivo, con o sin JS.
+
+   Se probó a desvanecerla arriba del todo con animation-timeline: scroll(),
+   para recuperar el nav flotando sobre el hero. Se descartó: si por lo que sea
+   el timeline no avanza, la capa se queda en el primer keyframe (opacity 0) y
+   vuelve el nav transparente encima del contenido. Un fondo fijo no tiene modo
+   de fallo. */
+.nav-pill {
+  position: relative;
+}
+
+.nav-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  box-shadow: 0 10px 40px -14px rgb(10 12 20 / 0.18);
+}
+
+.dark .nav-pill::before {
+  box-shadow: 0 10px 40px -12px rgb(0 0 0 / 0.9);
+}
+
+@media (min-width: 768px) {
+  .nav-pill::before {
+    background: color-mix(in srgb, var(--canvas) 78%, transparent);
+    backdrop-filter: blur(16px);
   }
 }
 
-/* Aparición al hacer scroll (ver components/Reveal.tsx) */
-.reveal {
+/* Menú móvil (<details> en Navbar.tsx). El aspecto va aquí y no en clases de
+   utilidad porque depende del estado [open] del propio elemento, que es lo que
+   permite que abra y cierre sin JS. */
+.menu > summary {
+  list-style: none;
+}
+.menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu-bar {
+  position: absolute;
+  left: 0;
+  display: block;
+  height: 1.5px;
+  width: 1rem;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    top 0.3s,
+    opacity 0.2s,
+    transform 0.3s;
+}
+.menu-bar-top {
+  top: 0;
+}
+.menu-bar-mid {
+  top: 0.375rem;
+}
+.menu-bar-bottom {
+  top: 0.75rem;
+}
+
+.menu[open] .menu-bar-top {
+  top: 0.375rem;
+  transform: rotate(45deg);
+}
+.menu[open] .menu-bar-mid {
+  opacity: 0;
+}
+.menu[open] .menu-bar-bottom {
+  top: 0.375rem;
+  transform: rotate(-45deg);
+}
+
+/* <details> muestra y oculta de golpe, así que la entrada va por animación. */
+.menu[open] > .menu-panel {
+  animation: rise 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Entrada de las tarjetas que React recrea (la agenda al filtrar). Va por
+   animación y no por el observador de scroll: una animación arranca sola con
+   cada elemento nuevo, sin JS que tenga que enterarse de que apareció. Si el
+   usuario pide menos movimiento, simplemente no hay animación y el elemento
+   se ve de una. */
+.rise {
+  animation: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Aparición al hacer scroll. Va detrás de .js (que pone el script inline de
+   layout.tsx) a propósito: si el bundle tarda o falla, el contenido nunca
+   queda invisible. El observador tampoco espera a la hidratación de React. */
+.js .reveal {
   opacity: 0;
   transform: translateY(22px);
   transition:
@@ -285,7 +407,7 @@
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.is-visible {
+.js .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
@@ -294,7 +416,7 @@
   html {
     scroll-behavior: auto;
   }
-  .reveal {
+  .js .reveal {
     opacity: 1;
     transform: none;
     transition: none;
@@ -302,7 +424,11 @@
   .animate-aurora,
   .animate-aurora-slow,
   .animate-sheen,
-  .animate-pulse-ring {
+  .rise,
+  .menu[open] > .menu-panel {
     animation: none !important;
+  }
+  .menu-bar {
+    transition: none;
   }
 }

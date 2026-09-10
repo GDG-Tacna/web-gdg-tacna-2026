@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Pending } from "./Pending";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { ArrowIcon } from "./icons";
@@ -9,15 +10,22 @@ export function Sponsors() {
   return (
     <section
       id="sponsors"
-      className="relative scroll-mt-28 overflow-hidden py-24 sm:py-32"
+      className="relative overflow-hidden py-24 sm:py-32"
     >
       <div className="shell">
         <SectionHeading
+          index="05"
           eyebrow="Sponsors"
           title="Las empresas que hacen posible el DevFest"
           description="Gracias a ellas la entrada general es gratuita. Si tu empresa quiere sumarse a la edición 2026, hay espacio para ti."
         />
 
+        {sponsors.length === 0 ? (
+          <Pending>
+            Estamos cerrando los acuerdos de patrocinio. Aquí aparecerán las
+            empresas que hagan posible esta edición.
+          </Pending>
+        ) : (
         <ul className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {sponsors.map((sponsor, index) => (
             <Reveal as="li" key={sponsor.name} delay={Math.min(index * 55, 280)}>
@@ -36,6 +44,7 @@ export function Sponsors() {
             </Reveal>
           ))}
         </ul>
+        )}
 
         {/* Invitación a patrocinar */}
         <Reveal delay={140}>
@@ -52,7 +61,9 @@ export function Sponsors() {
             </div>
 
             <a
-              href={`mailto:${site.email}?subject=Auspicio%20DevFest%20Tacna%202026`}
+              href={site.whatsappSponsors}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-line-2 bg-transparent px-6 py-3.5 text-[14px] font-semibold text-heading transition-colors hover:bg-solid hover:text-on-solid"
             >
               Quiero auspiciar
