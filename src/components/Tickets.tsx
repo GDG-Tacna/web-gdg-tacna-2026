@@ -31,10 +31,15 @@ function PlanCard({ plan }: { plan: Plan }) {
         {plan.description}
       </p>
 
-      <div className="mt-7">
+      <div className="mt-7 flex flex-wrap items-end gap-3">
         <span className="font-display bg-gradient-to-br from-heading to-muted bg-clip-text text-5xl leading-none font-bold tracking-tight text-transparent sm:text-6xl">
           {plan.price}
         </span>
+        {plan.compareAt && (
+          <span className="mb-1.5 text-[15px] text-faint line-through">
+            {plan.compareAt}
+          </span>
+        )}
       </div>
       <p className="mt-2 text-[12.5px] text-faint">{plan.priceNote}</p>
 
@@ -118,7 +123,7 @@ export function Tickets() {
           index="03"
           eyebrow="Entradas"
           title="Elige tu experiencia DevFest"
-          description="La conferencia es gratuita. Estamos preparando además una experiencia premium con merch del evento."
+          description="La conferencia es gratuita. Si quieres llevarte el merch del evento, suma la experiencia premium."
         />
 
         <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-2">

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { BackgroundFX } from "./BackgroundFX";
 import { Countdown } from "./Countdown";
 import { Reveal } from "./Reveal";
@@ -21,10 +22,8 @@ export function Hero() {
       <div className="shell relative z-10">
         <div className="flex flex-col items-center text-center">
           <Reveal>
-            <p className="font-display flex items-center gap-3 text-[11px] font-semibold tracking-[0.28em] text-muted uppercase sm:gap-4">
-              <span>{site.organizer} presenta</span>
-              <span aria-hidden className="h-px w-7 bg-line-2" />
-              <span>{site.city}</span>
+            <p className="font-display text-[11px] font-semibold tracking-[0.28em] text-muted uppercase">
+              {site.organizer} presenta
             </p>
           </Reveal>
 
@@ -52,22 +51,23 @@ export function Hero() {
 
           {/* Datos clave */}
           <Reveal delay={220}>
-            <dl className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
-              {meta.map(({ icon: Icon, label, value }) => (
-                <div
-                  key={label}
-                  className="glass flex items-center gap-2.5 rounded-full px-4 py-2.5"
-                >
-                  <Icon className="text-faint" />
-                  <div className="text-left">
-                    <dt className="text-[9px] font-semibold tracking-[0.16em] text-faint uppercase">
-                      {label}
-                    </dt>
-                    <dd className="text-[13px] font-medium text-heading">
-                      {value}
-                    </dd>
+            <dl className="mt-9 flex flex-col items-center gap-3 text-[13.5px] sm:flex-row sm:gap-5">
+              {meta.map(({ icon: Icon, label, value }, index) => (
+                <Fragment key={label}>
+                  {index > 0 && (
+                    <span
+                      aria-hidden
+                      className="hidden h-4 w-px bg-line-2 sm:block"
+                    />
+                  )}
+                  <div className="flex items-center gap-2">
+                    {/* El icono ya dice qué dato es; la etiqueta se mantiene
+                        solo para lectores de pantalla. */}
+                    <dt className="sr-only">{label}</dt>
+                    <Icon className="size-4 shrink-0 text-faint" />
+                    <dd className="text-body">{value}</dd>
                   </div>
-                </div>
+                </Fragment>
               ))}
             </dl>
           </Reveal>

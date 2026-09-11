@@ -46,8 +46,8 @@ export const site = {
   ],
   stats: [
     { value: "250+", label: "Asistentes esperados" },
-    { value: "TBD", label: "Charlas y talleres" },
-    { value: "TBD", label: "Speakers invitados" },
+    { value: "10", label: "Charlas y talleres" },
+    { value: "8", label: "Speakers invitados" },
     { value: "Gratis", label: "Entrada general" },
   ],
   nav: [

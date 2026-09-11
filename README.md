@@ -72,10 +72,15 @@ speaker:
 { name: "…", photo: "/speakers/nombre.jpg", /* ... */ }
 ```
 
-**Logos de sponsors:** van en `public/sponsors/`. La sección aplica
-`invert dark:invert-0`, pensado para logos monocromos en blanco sobre fondo
-transparente. Con logos reales a color, quita esas clases de
-`src/components/Sponsors.tsx` y provee una versión que se lea en ambos temas.
+**Logos de sponsors:** van en `public/sponsors/` y se referencian como
+`/sponsors/archivo.webp`. Sirve cualquier formato (SVG, WebP o PNG) con fondo
+transparente; con ~400px de ancho sobra, porque se muestran a unos 48px de alto.
+
+Cada logo va sobre una **placa blanca, también en tema oscuro**. Es a propósito:
+los logos llegan a color y muchos llevan texto negro, que sobre el fondo oscuro
+desaparecería. Así basta un archivo por sponsor en vez de una versión por tema,
+y se respetan los colores de marca. El `<Image>` usa `fill`, así que no hace
+falta declarar las dimensiones de cada logo: cualquier proporción encaja.
 
 **Botones de registro:** el CTA del hero, el "Regístrate" del nav y la entrada
 general apuntan a Luma; la sección de voluntarios, al formulario. Todos salen

@@ -12,11 +12,22 @@ export function Agenda() {
 
   // Las pausas solo tienen sentido en la vista completa del día.
   const items = useMemo(
-    () => (active === "all" ? agenda : agenda.filter((i) => i.track === active)),
+    () =>
+      active === "all" ? agenda : agenda.filter((i) => i.track === active),
     [active],
   );
 
   const sinAgenda = agenda.length === 0;
+  // filters solo trae "Todo el día" mientras no haya charlas con track propio.
+  const hayFiltros = filters.length > 1;
+
+  // Sin filtros no tiene sentido invitar a filtrar; y con el adelanto puesto,
+  // el propio bloque de la línea de tiempo ya explica que la agenda llega después.
+  const descripcion = sinAgenda
+    ? "Estamos cerrando el programa del día. Aquí aparecerá la línea de tiempo completa con charlas, workshops y pausas."
+    : hayFiltros
+      ? "Filtra por el track que más te interese."
+      : undefined;
 
   return (
     <section id="agenda" className="relative py-24 sm:py-32">
@@ -25,11 +36,7 @@ export function Agenda() {
           index="01"
           eyebrow="Agenda"
           title="Un día completo de aprendizaje, código y comunidad"
-          description={
-            sinAgenda
-              ? "Estamos cerrando el programa del día. Aquí aparecerá la línea de tiempo completa con charlas, workshops y pausas."
-              : "Filtra por el track que más te interese."
-          }
+          description={descripcion}
         />
 
         {sinAgenda ? (
@@ -40,33 +47,35 @@ export function Agenda() {
         ) : (
           <>
             {/* Filtros por track */}
-            <Reveal delay={160}>
-              <div
-                role="tablist"
-                aria-label="Filtrar agenda por track"
-                className="mt-10 flex flex-wrap justify-center gap-2"
-              >
-                {filters.map((filter) => {
-                  const selected = active === filter.id;
-                  return (
-                    <button
-                      key={filter.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={selected}
-                      onClick={() => setActive(filter.id)}
-                      className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all duration-200 ${
-                        selected
-                          ? "border-transparent bg-solid text-on-solid"
-                          : "border-line bg-surface text-muted hover:border-line-2 hover:text-heading"
-                      }`}
-                    >
-                      {filter.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </Reveal>
+            {hayFiltros && (
+              <Reveal delay={160}>
+                <div
+                  role="tablist"
+                  aria-label="Filtrar agenda por track"
+                  className="mt-10 flex flex-wrap justify-center gap-2"
+                >
+                  {filters.map((filter) => {
+                    const selected = active === filter.id;
+                    return (
+                      <button
+                        key={filter.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={selected}
+                        onClick={() => setActive(filter.id)}
+                        className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-all duration-200 ${
+                          selected
+                            ? "border-transparent bg-solid text-on-solid"
+                            : "border-line bg-surface text-muted hover:border-line-2 hover:text-heading"
+                        }`}
+                      >
+                        {filter.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Reveal>
+            )}
 
             {/* Línea de tiempo */}
             <div className="relative mx-auto mt-12 max-w-4xl">
@@ -95,9 +104,11 @@ export function Agenda() {
                         <div className="font-display text-[15px] font-semibold tabular-nums text-heading">
                           {item.time}
                         </div>
-                        <div className="mt-0.5 text-[11px] text-faint">
-                          {item.duration}
-                        </div>
+                        {item.duration && (
+                          <div className="mt-0.5 text-[11px] text-faint">
+                            {item.duration}
+                          </div>
+                        )}
                       </div>
 
                       {/* Punto de la línea */}
@@ -123,9 +134,11 @@ export function Agenda() {
                           >
                             {track.label}
                           </span>
-                          <span className="text-[11px] text-faint sm:hidden">
-                            {item.duration}
-                          </span>
+                          {item.duration && (
+                            <span className="text-[11px] text-faint sm:hidden">
+                              {item.duration}
+                            </span>
+                          )}
                         </div>
 
                         <h3

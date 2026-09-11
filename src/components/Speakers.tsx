@@ -92,7 +92,7 @@ export function Speakers() {
           index="02"
           eyebrow="Speakers"
           title="Quienes compartirán su experiencia contigo"
-          description="Ingenieros, GDEs y líderes técnicos contando cómo resuelven problemas reales en producción."
+          description="Expertos contando cómo usan la IA en su día a día."
         />
 
         {speakers.length === 0 ? (

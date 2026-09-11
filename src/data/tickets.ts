@@ -4,6 +4,8 @@ export type Plan = {
   name: string;
   description: string;
   price: string;
+  /** Precio anterior, tachado al lado. Para mostrar el descuento de preventa. */
+  compareAt?: string;
   priceNote: string;
   /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado"). */
   highlight?: string;
@@ -35,8 +37,6 @@ export const plans: Plan[] = [
     includes: [
       "Acceso a todas las charlas del día",
       "Zona de sponsors y espacios de networking",
-      // TODO: añadir el resto de beneficios cuando estén confirmados
-      "Resto de beneficios por confirmar",
     ],
     cta: "Regístrate gratis",
     ctaNote: "El registro se completa en Luma.",
@@ -48,15 +48,16 @@ export const plans: Plan[] = [
     name: "Llévate el merch del DevFest",
     description:
       "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
-    // TODO: definir precio y disponibilidad
-    price: "TBD",
-    priceNote: "Precio y disponibilidad por confirmar",
-    highlight: "En preparación",
+    price: "S/ 39",
+    compareAt: "S/ 49",
+    priceNote: "Precio de preventa hasta el 30 de setiembre",
+    highlight: "Preventa",
     featured: true,
     includesTitle: "Todo lo de la entrada general, más:",
     includes: [
       "Polo del DevFest Tacna 2026",
-      "Bolsa de regalos de los sponsors",
+      "Bolsa de regalos",
+      "Certificado de participación",
       "Beneficios adicionales por confirmar",
     ],
     cta: "Contáctanos",

@@ -8,10 +8,7 @@ import { site } from "@/lib/site";
 
 export function Sponsors() {
   return (
-    <section
-      id="sponsors"
-      className="relative overflow-hidden py-24 sm:py-32"
-    >
+    <section id="sponsors" className="relative overflow-hidden py-24 sm:py-32">
       <div className="shell">
         <SectionHeading
           index="05"
@@ -20,30 +17,46 @@ export function Sponsors() {
           description="Gracias a ellas la entrada general es gratuita. Si tu empresa quiere sumarse a la edición 2026, hay espacio para ti."
         />
 
+        {/*
+          La lista es flex y no grid: con pocos sponsors la grilla los dejaba
+          pegados a la izquierda con columnas vacías al lado. Así se centran sea
+          cual sea la cantidad, y al llenarse se comportan igual que una grilla.
+        */}
         {sponsors.length === 0 ? (
           <Pending>
             Estamos cerrando los acuerdos de patrocinio. Aquí aparecerán las
             empresas que hagan posible esta edición.
           </Pending>
         ) : (
-        <ul className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {sponsors.map((sponsor, index) => (
-            <Reveal as="li" key={sponsor.name} delay={Math.min(index * 55, 280)}>
-              <div className="group flex h-24 items-center justify-center rounded-2xl border border-line bg-surface px-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-line-2 hover:bg-surface-2 sm:h-28">
-                {/* Los logos de ejemplo son SVG blancos: en tema claro se
-                    invierten. Al poner logos reales a color, quita
-                    `invert dark:invert-0`. */}
-                <Image
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  width={220}
-                  height={48}
-                  className="h-8 w-auto opacity-70 invert transition-opacity duration-300 group-hover:opacity-100 sm:h-9 dark:opacity-55 dark:invert-0"
-                />
-              </div>
-            </Reveal>
-          ))}
-        </ul>
+          <ul className="mt-14 flex flex-wrap justify-center gap-3">
+            {sponsors.map((sponsor, index) => (
+              <Reveal
+                as="li"
+                key={sponsor.name}
+                delay={Math.min(index * 55, 280)}
+                className="w-full max-w-[340px] sm:max-w-none sm:basis-[calc(50%-0.375rem)] lg:basis-[calc(33.333%-0.5rem)]"
+              >
+                <div className="group flex h-32 items-center justify-center rounded-2xl border border-line bg-white px-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-line-2">
+                  {/*
+                  Placa blanca a propósito, también en tema oscuro: los logos de
+                  los sponsors llegan a color y muchos llevan texto negro, que
+                  sobre el fondo oscuro desaparecería. Así vale un único archivo
+                  por sponsor en lugar de una versión por tema.
+                  `fill` evita tener que declarar las dimensiones de cada logo.
+                */}
+                  <div className="relative h-24 w-full">
+                    <Image
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      fill
+                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </ul>
         )}
 
         {/* Invitación a patrocinar */}
@@ -54,8 +67,8 @@ export function Sponsors() {
                 ¿Quieres patrocinar el DevFest Tacna 2026?
               </h3>
               <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-muted">
-                Conecta tu marca con más de 300 desarrolladores del sur del Perú.
-                Escríbenos y te enviamos el brochure con los paquetes de
+                Conecta tu marca con más de 300 desarrolladores del sur del
+                Perú. Escríbenos y te enviamos el brochure con los paquetes de
                 auspicio.
               </p>
             </div>
