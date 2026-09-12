@@ -48,8 +48,8 @@ export const plans: Plan[] = [
     name: "Llévate el merch del DevFest",
     description:
       "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
-    price: "S/ 39",
-    compareAt: "S/ 49",
+    price: "S/ 49",
+    compareAt: "S/ 59",
     priceNote: "Precio de preventa hasta el 30 de setiembre",
     highlight: "Preventa",
     featured: true,
