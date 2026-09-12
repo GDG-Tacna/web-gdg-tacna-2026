@@ -9,6 +9,8 @@ const whatsapp = (numero: string, mensaje: string) =>
 
 export const site = {
   name: "DevFest Tacna 2026",
+  /** Dominio de producción. Lo usa metadataBase para las etiquetas Open Graph. */
+  url: "https://devfest.gdgtacna.com",
   organizer: "GDG Tacna",
   tagline: "El festival de tecnología más grande del sur del Perú",
   description:

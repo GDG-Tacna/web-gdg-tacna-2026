@@ -15,8 +15,13 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const titulo = `${site.name}`;
+
 export const metadata: Metadata = {
-  title: `${site.name} · ${site.organizer}`,
+  // Sin metadataBase, Next no puede convertir en absolutas las URLs de las
+  // etiquetas Open Graph, y WhatsApp o Telegram no resuelven rutas relativas.
+  metadataBase: new URL(site.url),
+  title: titulo,
   description: site.description,
   keywords: [
     "DevFest",
@@ -26,11 +31,20 @@ export const metadata: Metadata = {
     "Google Developer Groups",
     "conferencia tech",
   ],
+  alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name} · ${site.organizer}`,
+    title: titulo,
     description: site.description,
+    url: "/",
+    siteName: site.name,
     locale: "es_PE",
     type: "website",
+    // La imagen la aporta app/opengraph-image.tsx; Next la añade sola.
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: titulo,
+    description: site.description,
   },
 };
 

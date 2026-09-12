@@ -88,6 +88,28 @@ de `site.ts`, así que se cambian en un sitio. El botón de la experiencia
 premium queda inerte a propósito mientras no tenga destino: basta con darle un
 `href` en `src/data/tickets.ts` para activarlo.
 
+## Vista previa al compartir el enlace (Open Graph)
+
+Cuando alguien pega `devfest.gdgtacna.com` en WhatsApp, Telegram, X, LinkedIn o
+Discord, la tarjeta que aparece sale de las etiquetas Open Graph de
+`app/layout.tsx` y de la imagen que genera `app/opengraph-image.tsx`.
+
+- La imagen **se dibuja desde JSX en el build**, no es un archivo: si cambian la
+  fecha o la sede en `site.ts`, la vista previa se actualiza sola.
+- La renderiza Satori, no un navegador. Solo entiende un subconjunto de CSS: sin
+  grid, y **todo elemento con más de un hijo necesita `display: flex`**. Ojo con
+  `{variable} texto`, que son dos nodos y rompe el build.
+- `metadataBase` en `layout.tsx` apunta a `site.url`. Sin eso las URLs de las
+  etiquetas quedarían relativas y ni WhatsApp ni Telegram las resuelven. **Si
+  cambia el dominio, se cambia ahí.**
+- `twitter:image` se rellena solo a partir de la imagen Open Graph; no hace
+  falta un archivo aparte.
+
+Para comprobarlo tras desplegar: [OpenGraph.xyz](https://www.opengraph.xyz) o el
+[validador de LinkedIn](https://www.linkedin.com/post-inspector/). Las redes
+cachean la vista previa con fuerza, así que si ya compartiste el enlace antes,
+usa esos validadores para forzar el refresco.
+
 ## Tema claro y oscuro
 
 El tema se controla con la clase `.dark` en `<html>`. Los componentes nunca
