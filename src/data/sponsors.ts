@@ -8,4 +8,5 @@ export type Sponsor = {
 /** Sponsors confirmados. Vacío ⇒ la sección muestra su estado "por confirmar". */
 export const sponsors: Sponsor[] = [
   { name: "Universidad Tecnológica del Perú", logo: "/sponsors/utp.webp" },
+  { name: "JetBrains", logo: "/sponsors/jetbrains.svg" },
 ];
