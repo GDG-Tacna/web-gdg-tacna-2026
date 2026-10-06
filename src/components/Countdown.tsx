@@ -38,26 +38,23 @@ export function Countdown({ date }: { date: string }) {
 
   return (
     <div
-      className="flex items-center gap-2 sm:gap-3"
+      className="flex items-center gap-1.5 sm:gap-2"
       role="timer"
       aria-live="off"
       aria-label="Cuenta regresiva para el evento"
     >
       {(Object.keys(labels) as (keyof Parts)[]).map((key, index) => (
-        <div key={key} className="flex items-center gap-2 sm:gap-3">
-          <div className="glass min-w-[62px] rounded-2xl px-3 py-2.5 text-center sm:min-w-[74px] sm:px-4 sm:py-3">
-            <div className="font-display text-2xl leading-none font-bold tabular-nums text-heading sm:text-3xl">
+        <div key={key} className="flex flex-1 items-center gap-1.5 sm:gap-2">
+          <div className="flex-1 rounded-2xl border-2 border-ink bg-canvas px-2 py-2.5 text-center sm:py-3">
+            <div className="text-2xl leading-none font-bold tabular-nums text-heading sm:text-[28px]">
               {parts ? String(parts[key]).padStart(2, "0") : "--"}
             </div>
-            <div className="mt-1.5 text-[9px] font-semibold tracking-[0.16em] text-faint uppercase sm:text-[10px]">
+            <div className="mt-1.5 font-mono text-[9px] font-semibold tracking-[0.12em] text-faint uppercase sm:text-[10px]">
               {labels[key]}
             </div>
           </div>
           {index < 3 && (
-            <span
-              aria-hidden
-              className="animate-sheen font-display text-lg text-faint"
-            >
+            <span aria-hidden className="text-lg font-bold text-heading">
               :
             </span>
           )}

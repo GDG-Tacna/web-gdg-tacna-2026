@@ -11,63 +11,48 @@ export type Track = {
   id: TrackId;
   label: string;
   /**
-   * Clases tailwind para el punto de la línea de tiempo, el chip y el borde
-   * al pasar el cursor. Los tokens `*-ink` cambian de tono según el tema.
+   * Clases tailwind del chip del track. Los pasteles siguen los stickers de
+   * track de la guía de marca (Android verde, Cloud azul, AI rosa, Web
+   * amarillo) y llevan el texto en `coal`, que no cambia con el tema.
    */
-  dot: string;
   chip: string;
-  hover: string;
 };
 
 export const tracks: Record<TrackId, Track> = {
   keynote: {
     id: "keynote",
     label: "Keynote",
-    dot: "bg-brand-violet",
-    chip: "border-violet-ink/30 bg-violet-ink/10 text-violet-ink",
-    hover: "group-hover:border-violet-ink/40",
+    chip: "border-ink bg-solid text-on-solid",
   },
   ia: {
     id: "ia",
     label: "IA",
-    dot: "bg-g-green",
-    chip: "border-g-green-ink/30 bg-g-green-ink/10 text-g-green-ink",
-    hover: "group-hover:border-g-green-ink/40",
+    chip: "border-coal bg-p-red text-coal",
   },
   web: {
     id: "web",
     label: "Web",
-    dot: "bg-g-blue",
-    chip: "border-g-blue-ink/30 bg-g-blue-ink/10 text-g-blue-ink",
-    hover: "group-hover:border-g-blue-ink/40",
+    chip: "border-coal bg-p-yellow text-coal",
   },
   mobile: {
     id: "mobile",
     label: "Mobile",
-    dot: "bg-g-red",
-    chip: "border-g-red-ink/30 bg-g-red-ink/10 text-g-red-ink",
-    hover: "group-hover:border-g-red-ink/40",
+    chip: "border-coal bg-p-green text-coal",
   },
   cloud: {
     id: "cloud",
     label: "Cloud",
-    dot: "bg-g-yellow",
-    chip: "border-g-yellow-ink/30 bg-g-yellow-ink/10 text-g-yellow-ink",
-    hover: "group-hover:border-g-yellow-ink/40",
+    chip: "border-coal bg-p-blue text-coal",
   },
   break: {
     id: "break",
     label: "Pausa",
-    dot: "bg-line-2",
-    chip: "border-line bg-surface-2 text-faint",
-    hover: "",
+    chip: "border-line-2 bg-transparent text-muted",
   },
   tbd: {
     id: "tbd",
     label: "Por anunciar",
-    dot: "bg-g-yellow",
-    chip: "border-g-yellow-ink/30 bg-g-yellow-ink/10 text-g-yellow-ink",
-    hover: "group-hover:border-g-yellow-ink/40",
+    chip: "border-coal bg-h-yellow text-coal",
   },
 };
 

@@ -23,14 +23,18 @@ src/
 ├── components/          Una sección por archivo
 │   ├── Navbar.tsx       Nav flotante + menú móvil
 │   ├── ThemeToggle.tsx  Botón claro / oscuro
-│   ├── Hero.tsx         Portada, cuenta regresiva y métricas
-│   ├── Agenda.tsx       Línea de tiempo con filtros por track
+│   ├── Hero.tsx         Lockup { DevFest }, datos clave, cuenta regresiva y métricas
+│   ├── StickerStrip.tsx Cinta de glifos entre el hero y la agenda
+│   ├── Agenda.tsx       Programa con filtros por track
 │   ├── Speakers.tsx     Grilla de speakers
 │   ├── Tickets.tsx      Entrada general + experiencia premium
 │   ├── Volunteers.tsx   Postulación de voluntarios
 │   ├── Sponsors.tsx     Grilla de logos + invitación a auspiciar
 │   ├── Pending.tsx      Estado "por confirmar" de las secciones vacías
-│   └── Footer.tsx
+│   ├── Footer.tsx
+│   ├── glyphs.tsx       Glifos de la guía de marca (llaves, logo GDG, asterisco…)
+│   └── TabCard.tsx      Tarjeta con pestaña, la silueta escalonada de la guía
+├── assets/fonts/        Google Sans para la imagen Open Graph (ver más abajo)
 ├── data/                Contenido editable (agenda, speakers, sponsors, planes)
 └── lib/site.ts          Fecha, sede, contacto, enlaces y navegación
 ```
@@ -76,7 +80,7 @@ speaker:
 `/sponsors/archivo.webp`. Sirve cualquier formato (SVG, WebP o PNG) con fondo
 transparente; con ~400px de ancho sobra, porque se muestran a unos 48px de alto.
 
-Cada logo va sobre una **placa blanca, también en tema oscuro**. Es a propósito:
+Los logos van sobre un **panel blanco, también en tema oscuro**. Es a propósito:
 los logos llegan a color y muchos llevan texto negro, que sobre el fondo oscuro
 desaparecería. Así basta un archivo por sponsor en vez de una versión por tema,
 y se respetan los colores de marca. El `<Image>` usa `fill`, así que no hace
@@ -99,6 +103,10 @@ Discord, la tarjeta que aparece sale de las etiquetas Open Graph de
 - La renderiza Satori, no un navegador. Solo entiende un subconjunto de CSS: sin
   grid, y **todo elemento con más de un hijo necesita `display: flex`**. Ojo con
   `{variable} texto`, que son dos nodos y rompe el build.
+- Satori tampoco ve las fuentes de `next/font`. Google Sans se carga desde
+  `src/assets/fonts/`: son recortes latinos de los TTF de Google Fonts (licencia
+  OFL), **sin la tabla GSUB**, porque Satori falla con ella
+  (`lookupType: 7 … is not yet supported`). Solo hay pesos 500 y 700.
 - `metadataBase` en `layout.tsx` apunta a `site.url`. Sin eso las URLs de las
   etiquetas quedarían relativas y ni WhatsApp ni Telegram las resuelven. **Si
   cambia el dominio, se cambia ahí.**
@@ -110,13 +118,41 @@ Para comprobarlo tras desplegar: [OpenGraph.xyz](https://www.opengraph.xyz) o el
 cachean la vista previa con fuerza, así que si ya compartiste el enlace antes,
 usa esos validadores para forzar el refresco.
 
+## Sistema visual
+
+El diseño sigue la **guía de marca DevFest 2026** (`goo.gle/devfest26-brand-guide`):
+fondo off-white `#f0f0f0`, tinta `#1e1e1e`, contornos de 2px y colores planos.
+**Sin degradados, sin sombras y sin blur**: la marca es plana a propósito.
+
+- **Tipografía:** Google Sans para todo y Google Sans Code (`font-mono`) para
+  etiquetas, horas y notas. El wordmark "DevFest" va siempre en Bold.
+- **Paleta** (en `@theme` de `globals.css`, idéntica en ambos temas): core
+  (`g-blue`, `g-green`, `g-yellow`, `g-red`), halftones (`h-*`) y pasteles
+  (`p-*`), más `paper` y `coal`. Son solo para rellenos.
+- **Glifos** (`components/glyphs.tsx`): rellenos con contorno (`Brace`,
+  `Slashes`, `ArrowBold`, `Plus`, `Dots`, `Blob`, `GdgMark`) y monolínea
+  (`Asterisk`, `Hash`, `Globe`, `ArrowLine`, `Scallops`). Usan
+  `non-scaling-stroke`, así el contorno mide lo mismo a cualquier tamaño.
+- **Formas:** píldoras (`rounded-full border-2 border-ink`), botones `.btn` /
+  `.btn-ghost` y la tarjeta con pestaña `TabCard`.
+- **Etiquetas de sección** al estilo de los lockups de track de la guía:
+  `Agenda@DevFest`, `Speakers@DevFest`…
+
 ## Tema claro y oscuro
 
 El tema se controla con la clase `.dark` en `<html>`. Los componentes nunca
-usan colores literales: solo tokens semánticos (`bg-canvas`, `text-heading`,
-`text-muted`, `border-line`, `bg-solid`, `text-g-blue-ink`…) definidos una
-sola vez en `globals.css`, en `:root` para claro y en `.dark` para oscuro.
+usan colores literales: solo tokens semánticos (`bg-canvas`, `bg-panel`,
+`border-ink`, `text-heading`, `text-muted`, `border-line`, `bg-solid`,
+`text-g-blue-ink`…) definidos una sola vez en `globals.css`, en `:root` para
+claro y en `.dark` para oscuro.
 **Para ajustar cualquier color del sitio, edita esas dos listas de variables.**
+
+- `border-ink` es el contorno de la marca (casi negro en claro, off-white en
+  oscuro); `border-line` es el separador suave de dentro de las tarjetas.
+- **`.on-color`:** toda superficie rellena con un color de la paleta (pastel,
+  halftone o blanco fijo) lleva esta clase. Repone los tokens del tema claro
+  para lo que cuelga de ella, de modo que el texto siga en tinta oscura también
+  en tema oscuro. Para un texto suelto sobre color basta `text-coal`.
 
 - Sin preferencia guardada se sigue al sistema; el botón de la nav la fija en
   `localStorage` y a partir de ahí manda la elección del usuario.
@@ -124,9 +160,9 @@ sola vez en `globals.css`, en `:root` para claro y en `.dark` para oscuro.
   para que no haya destello blanco.
 - `ThemeToggle` decide qué icono mostrar por CSS (`hidden dark:block`), no con
   estado de React: así no hay desajuste de hidratación.
-- Los colores de Google tienen dos versiones: la viva (`g-blue`, para puntos y
-  degradados) y la legible (`g-blue-ink`, para texto y chips), que cambia de
-  tono según el tema.
+- Los colores de Google tienen dos versiones: la viva (`g-blue`, para
+  rellenos) y la legible (`g-blue-ink`, para texto sobre el lienzo), que cambia
+  de tono según el tema.
 
 ## Pendiente
 
@@ -172,13 +208,11 @@ transparente encima del contenido.
 Su aspecto vive en `globals.css` (`.nav-pill`, `.menu`, `.menu-bar`,
 `.menu-panel`) porque depende del estado `[open]` del propio elemento.
 
-**3. Nada de `filter: blur()` en capas grandes.** Los halos de color son
-`radial-gradient` (`.aurora` en `globals.css`), no divs con `blur-[110px]`. Un
-blur de ese radio obliga al móvil a rasterizar una textura enorme en cada
-composición; el degradado se ve igual y no crea capa. Por lo mismo el
-`backdrop-filter` de la navbar solo se activa desde `md`, el grano
-(`feTurbulence`) está apagado por debajo de 768px, y el respirado de las
-auroras solo corre en pantallas grandes.
+**3. Nada de `filter: blur()` ni `backdrop-filter`.** El diseño actual es plano
+y no usa ninguno de los dos; que siga así. Un blur de radio grande obliga al
+móvil a rasterizar una textura enorme en cada composición. Las animaciones
+decorativas (cinta de stickers, asterisco que gira, entrada de los glifos) solo
+tocan `transform`, `rotate`, `scale` y `opacity`, que no repintan.
 
 **Navegadores soportados.** Next 16 y Tailwind 4 comparten mínimo: Chrome
 111+, Edge 111+, Firefox 111+ y Safari 16.4+ (iOS 16.4, marzo de 2023). Por
@@ -190,9 +224,9 @@ escritorio, así que este tipo de coste de rasterizado no aparece en el informe.
 
 ## Notas de implementación
 
-- Casi todo son Server Components. Solo son cliente `Navbar` (estado de
-  scroll y menú), `Countdown` (reloj), `Agenda` (filtros) y `Reveal`
-  (aparición al hacer scroll).
+- Casi todo son Server Components. Solo son cliente `Navbar` (cerrar el menú
+  al navegar), `ThemeToggle`, `Countdown` (reloj) y `Agenda` (filtros).
 - Las animaciones respetan `prefers-reduced-motion`.
-- Las capas difuminadas del hero son estáticas y solo animan su opacidad:
-  moverlas o escalarlas obliga a re-rasterizar un blur de 110px en cada frame.
+- Los glifos animan con las propiedades sueltas `rotate` y `scale`, no con
+  `transform`, para no pisar la animación de entrada `.pop`. Por lo mismo el
+  espejo de la llave de cierre va dentro del SVG y no como `transform` CSS.

@@ -1,58 +1,56 @@
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
+import { TabCard } from "./TabCard";
 import { ArrowIcon, CheckIcon } from "./icons";
 import { plans, type Plan } from "@/data/tickets";
 import { site } from "@/lib/site";
 
 function PlanCard({ plan }: { plan: Plan }) {
-  const body = (
-    <div
-      className={`relative flex h-full flex-col p-7 sm:p-9 ${
-        plan.featured
-          ? "rounded-[calc(2rem-1.5px)] bg-panel"
-          : "glass rounded-4xl"
-      }`}
+  return (
+    <TabCard
+      tab={plan.badge}
+      // El plan destacado va sobre amarillo pastel, como un sticker de la
+      // guía; el general, sobre la superficie del tema.
+      fill={plan.featured ? "on-color bg-p-yellow" : "bg-panel"}
+      className="h-full"
+      bodyClassName="flex flex-col p-6 sm:p-9"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-line bg-surface-2 px-3 py-1 text-[10px] font-semibold tracking-[0.16em] text-muted uppercase">
-          {plan.badge}
-        </span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <h3 className="max-w-sm text-2xl leading-tight font-bold tracking-[-0.02em] text-balance text-heading sm:text-[28px]">
+          {plan.name}
+        </h3>
         {plan.highlight && (
-          <span className="rounded-full border border-violet-ink/30 bg-violet-ink/10 px-3 py-1 text-[10px] font-semibold tracking-[0.16em] text-violet-ink uppercase">
+          <span className="rounded-full border-2 border-ink bg-h-red px-3 py-1 font-mono text-[11px] font-semibold tracking-[0.08em] text-coal uppercase">
             {plan.highlight}
           </span>
         )}
       </div>
-
-      <h3 className="font-display mt-5 text-2xl font-bold tracking-tight text-balance text-heading">
-        {plan.name}
-      </h3>
-      <p className="mt-2 max-w-md text-[14px] leading-relaxed text-muted">
+      <p className="mt-2.5 max-w-md text-[15px] leading-relaxed text-muted">
         {plan.description}
       </p>
 
-      <div className="mt-7 flex flex-wrap items-end gap-3">
-        <span className="font-display bg-gradient-to-br from-heading to-muted bg-clip-text text-5xl leading-none font-bold tracking-tight text-transparent sm:text-6xl">
+      <div className="mt-8 flex flex-wrap items-end gap-3">
+        <span className="text-6xl leading-[0.9] font-bold tracking-[-0.045em] text-heading sm:text-7xl">
           {plan.price}
         </span>
         {plan.compareAt && (
-          <span className="mb-1.5 text-[15px] text-faint line-through">
+          <span className="mb-1 text-lg font-medium text-faint line-through">
             {plan.compareAt}
           </span>
         )}
       </div>
-      <p className="mt-2 text-[12.5px] text-faint">{plan.priceNote}</p>
+      <p className="mt-3 font-mono text-[12px] text-faint">{plan.priceNote}</p>
 
-      <p className="mt-8 text-[12px] font-semibold tracking-[0.12em] text-faint uppercase">
+      <p className="mt-8 border-t-2 border-line pt-6 font-mono text-[11px] font-semibold tracking-[0.12em] text-faint uppercase">
         {plan.includesTitle}
       </p>
-      <ul className="mt-4 flex flex-col gap-3.5">
+      <ul className="mt-4 flex flex-col gap-3">
         {plan.includes.map((item) => (
           <li key={item} className="flex items-start gap-3">
-            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-g-green-ink/15 text-g-green-ink">
+            <span className="mt-px grid size-[22px] shrink-0 place-items-center rounded-full border-[1.5px] border-ink bg-h-green text-coal">
               <CheckIcon className="size-3" />
             </span>
-            <span className="text-[14px] leading-snug text-body">{item}</span>
+            <span className="text-[15px] leading-snug text-body">{item}</span>
           </li>
         ))}
       </ul>
@@ -63,10 +61,8 @@ function PlanCard({ plan }: { plan: Plan }) {
             href={plan.href}
             target="_blank"
             rel="noopener noreferrer"
-            className={`group/cta inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-semibold transition-transform hover:scale-[1.01] active:scale-[0.99] ${
-              plan.featured
-                ? "bg-solid text-on-solid"
-                : "border border-line-2 text-heading hover:bg-surface-2"
+            className={`btn group/cta w-full py-4 ${
+              plan.featured ? "" : "btn-ghost"
             }`}
           >
             {plan.cta}
@@ -77,47 +73,23 @@ function PlanCard({ plan }: { plan: Plan }) {
           <button
             type="button"
             aria-disabled="true"
-            className={`w-full rounded-full px-6 py-4 text-[15px] font-semibold ${
-              plan.featured
-                ? "bg-surface-2 text-muted"
-                : "border border-line text-muted"
-            }`}
+            className="w-full rounded-full border-2 border-dashed border-line-2 px-6 py-4 text-[15px] font-semibold text-muted"
           >
             {plan.cta}
           </button>
         )}
 
-        <p className="text-center text-[12px] text-faint">{plan.ctaNote}</p>
+        <p className="text-center font-mono text-[11.5px] text-faint">
+          {plan.ctaNote}
+        </p>
       </div>
-    </div>
-  );
-
-  if (!plan.featured) {
-    return <div className="h-full">{body}</div>;
-  }
-
-  // La tarjeta destacada lleva un anillo degradado de 1.5px y un halo detrás.
-  return (
-    <div className="group relative h-full rounded-4xl p-[1.5px]">
-      <div
-        aria-hidden
-        className="absolute -inset-10 -z-10 rounded-[4rem] bg-[radial-gradient(closest-side,rgb(139_92_246/0.22),rgb(66_133_244/0.12)_55%,transparent)] opacity-70 transition-opacity duration-500 group-hover:opacity-100"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 rounded-4xl bg-gradient-to-br from-g-blue via-brand-violet to-g-green opacity-80 transition-opacity duration-500 group-hover:opacity-100"
-      />
-      {body}
-    </div>
+    </TabCard>
   );
 }
 
 export function Tickets() {
   return (
-    <section
-      id="entradas"
-      className="relative overflow-hidden py-24 sm:py-32"
-    >
+    <section id="entradas" className="relative py-20 sm:py-28">
       <div className="shell">
         <SectionHeading
           index="03"
@@ -135,11 +107,11 @@ export function Tickets() {
         </div>
 
         <Reveal delay={160}>
-          <p className="mt-10 text-center text-[13px] text-muted">
+          <p className="mt-10 text-[14px] text-muted">
             ¿Tienes dudas sobre el evento? Escríbenos a{" "}
             <a
               href={`mailto:${site.email}`}
-              className="font-medium text-heading underline decoration-line-2 underline-offset-4 transition-colors hover:decoration-heading"
+              className="font-medium text-heading underline decoration-line-2 decoration-2 underline-offset-4 transition-colors hover:decoration-g-yellow"
             >
               {site.email}
             </a>

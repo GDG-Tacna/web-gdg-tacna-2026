@@ -22,7 +22,7 @@ export function Navbar() {
             globals.css. Así no depende de que React hidrate. */}
         <nav
           aria-label="Principal"
-          className="nav-pill flex items-center justify-between gap-4 rounded-full px-3 py-2.5 sm:px-4"
+          className="nav-pill flex items-center justify-between gap-4 rounded-full px-3 py-2 sm:px-3.5"
         >
           <a
             href="#top"
@@ -37,7 +37,7 @@ export function Navbar() {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="rounded-full px-3.5 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-heading"
+                  className="rounded-full px-3.5 py-2 text-sm font-medium text-body transition-colors hover:bg-p-yellow hover:text-coal"
                 >
                   {item.label}
                 </a>
@@ -52,7 +52,7 @@ export function Navbar() {
               href={site.registerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden rounded-full bg-solid px-5 py-2.5 text-sm font-semibold text-on-solid transition-transform hover:scale-[1.03] active:scale-95 sm:inline-flex"
+              className="btn hidden px-5 py-2.5 text-sm sm:inline-flex"
             >
               Regístrate
             </a>
@@ -65,7 +65,7 @@ export function Navbar() {
             <details className="menu lg:hidden">
               <summary
                 aria-label="Menú de navegación"
-                className="grid size-10 cursor-pointer place-items-center rounded-full border border-line bg-surface text-heading transition-colors hover:bg-surface-2"
+                className="grid size-10 cursor-pointer place-items-center rounded-full border-2 border-ink bg-panel text-heading transition-colors hover:bg-p-blue hover:text-coal"
               >
                 <span aria-hidden className="relative block h-3.5 w-4">
                   <span className="menu-bar menu-bar-top" />
@@ -74,14 +74,14 @@ export function Navbar() {
                 </span>
               </summary>
 
-              <div className="menu-panel absolute inset-x-5 top-full mt-2 md:inset-x-8 overflow-hidden rounded-3xl border border-line bg-panel shadow-[0_16px_40px_-16px_rgb(10_12_20/0.35)] dark:shadow-[0_16px_40px_-12px_rgb(0_0_0/0.85)]">
+              <div className="menu-panel absolute inset-x-5 top-full mt-2 overflow-hidden rounded-3xl border-2 border-ink bg-panel md:inset-x-8">
                 <ul className="flex flex-col p-2">
                   {site.nav.map((item) => (
                     <li key={item.href}>
                       <a
                         href={item.href}
                         onClick={cerrarMenu}
-                        className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-body transition-colors hover:bg-surface-2 hover:text-heading"
+                        className="block rounded-2xl px-4 py-3 text-[15px] font-medium text-body transition-colors hover:bg-p-yellow hover:text-coal"
                       >
                         {item.label}
                       </a>
@@ -93,7 +93,7 @@ export function Navbar() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={cerrarMenu}
-                      className="block rounded-2xl bg-solid px-4 py-3 text-center text-[15px] font-semibold text-on-solid"
+                      className="btn w-full"
                     >
                       Regístrate
                     </a>
