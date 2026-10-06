@@ -641,6 +641,97 @@
   transform: none;
 }
 
+/* ---------------------------------------------------------------------------
+   Onda del cambio de tema (ThemeToggle + View Transitions API).
+
+   El tema nuevo se descubre en círculo desde el punto del clic, y por delante
+   van cuatro anillos planos con los colores de Google, rematados por dentro y
+   por fuera con el contorno de tinta de la marca.
+
+   Capas, de abajo arriba: el relleno de image-pair (los anillos), la captura
+   del tema viejo con un agujero de radio --wave-r, y el tema nuevo recortado a
+   un círculo cuatro anillos más pequeño. Los anillos solo asoman por el hueco
+   que queda entre los dos.
+
+   ThemeToggle pone la clase .theme-wave en <html> mientras dura, junto con el
+   origen (--wave-x, --wave-y) y la distancia a la esquina más lejana
+   (--wave-far).
+
+   --wave-r va registrada porque una variable sin registrar no se interpola:
+   salta de golpe. Se anima en image-pair y no en <html> a propósito: es
+   heredable, y ahí obligaría a recalcular el estilo de toda la página en cada
+   frame en vez del de tres pseudoelementos.
+--------------------------------------------------------------------------- */
+@property --wave-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+.theme-wave {
+  --wave-band: clamp(10px, 1.6vmax, 22px);
+  /* Los cuatro anillos más sus dos contornos de 2px */
+  --wave-bands: calc(var(--wave-band) * 4 + 4px);
+}
+
+.theme-wave::view-transition-old(root),
+.theme-wave::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Los cortes entre colores llevan 1px de margen: un corte seco en un degradado
+   radial sale con dientes de sierra. */
+.theme-wave::view-transition-image-pair(root) {
+  --wave-in: calc(var(--wave-r) - var(--wave-bands) + 2px);
+  background: radial-gradient(
+    circle at var(--wave-x) var(--wave-y),
+    var(--color-coal) calc(var(--wave-in) - 0.5px),
+    var(--color-g-green) calc(var(--wave-in) + 0.5px)
+      calc(var(--wave-in) + var(--wave-band) - 0.5px),
+    var(--color-g-yellow) calc(var(--wave-in) + var(--wave-band) + 0.5px)
+      calc(var(--wave-in) + var(--wave-band) * 2 - 0.5px),
+    var(--color-g-red) calc(var(--wave-in) + var(--wave-band) * 2 + 0.5px)
+      calc(var(--wave-in) + var(--wave-band) * 3 - 0.5px),
+    var(--color-g-blue) calc(var(--wave-in) + var(--wave-band) * 3 + 0.5px)
+      calc(var(--wave-r) - 2.5px),
+    var(--color-coal) calc(var(--wave-r) - 1.5px)
+  );
+  animation: wave 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.theme-wave::view-transition-old(root) {
+  mask-image: radial-gradient(
+    circle at var(--wave-x) var(--wave-y),
+    transparent calc(var(--wave-r) - 0.5px),
+    black calc(var(--wave-r) + 0.5px)
+  );
+}
+
+.theme-wave::view-transition-new(root) {
+  clip-path: circle(
+    max(0px, var(--wave-r) - var(--wave-bands)) at var(--wave-x) var(--wave-y)
+  );
+}
+
+@keyframes wave {
+  from {
+    --wave-r: 0px;
+  }
+  to {
+    --wave-r: calc(var(--wave-far) + var(--wave-bands));
+  }
+}
+
+/* La vista nueva está viva durante la onda: sin esto, .btn y los
+   transition-colors se verían fundiendo del color viejo al nuevo dentro del
+   círculo. */
+.theme-wave *,
+.theme-wave *::before,
+.theme-wave *::after {
+  transition: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -656,7 +747,8 @@
   .marquee-track,
   .menu[open] > .menu-panel,
   .mascota-tira,
-  .mascota-cuerpo {
+  .mascota-cuerpo,
+  .theme-wave::view-transition-image-pair(root) {
     animation: none !important;
   }
   .sticker,
