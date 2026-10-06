@@ -39,7 +39,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       title="Cambiar entre tema claro y oscuro"
       aria-label="Cambiar entre tema claro y oscuro"
-      className={`grid size-10 place-items-center rounded-full border border-line bg-surface text-heading transition-colors hover:bg-surface-2 ${className}`}
+      className={`grid size-10 place-items-center rounded-full border-2 border-ink bg-panel text-heading transition-colors hover:bg-p-blue hover:text-coal ${className}`}
     >
       <SunIcon className="hidden dark:block" />
       <MoonIcon className="block dark:hidden" />

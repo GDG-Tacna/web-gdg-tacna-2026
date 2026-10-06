@@ -1,16 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Google_Sans, Google_Sans_Code } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Las tipografías de la guía de marca DevFest 2026: Google Sans para todo y
+// una monoespaciada para etiquetas y horas.
+//
+// Next avisa al compilar de que no tiene métricas para generar la fuente de
+// respaldo de estas dos familias ("Failed to find font override values"). Es
+// inofensivo: solo significa que el respaldo no va ajustado al ancho real.
+const googleSans = Google_Sans({
+  variable: "--font-google-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const googleSansCode = Google_Sans_Code({
+  variable: "--font-google-sans-code",
   subsets: ["latin"],
   display: "swap",
 });
@@ -50,8 +56,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
-    { media: "(prefers-color-scheme: dark)", color: "#05060b" },
+    { media: "(prefers-color-scheme: light)", color: "#f0f0f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e1e1e" },
   ],
 };
 
@@ -116,7 +122,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${googleSans.variable} ${googleSansCode.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
