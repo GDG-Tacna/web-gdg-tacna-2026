@@ -62,11 +62,13 @@ export const viewport: Viewport = {
 };
 
 /**
- * Se ejecuta antes de pintar. Hace dos cosas:
+ * Se ejecuta antes de pintar. Hace tres cosas:
  *
  * 1. Aplica el tema guardado (o el del sistema) para que la página no aparezca
  *    en claro y salte a oscuro.
- * 2. Marca <html class="js"> y monta el observador del reveal. Va aquí y no en
+ * 2. Si la mascota se ocultó en esta sesión, marca <html class="sin-mascota">
+ *    para que no llegue a pintarse (ver components/Mascota.tsx).
+ * 3. Marca <html class="js"> y monta el observador del reveal. Va aquí y no en
  *    React a propósito: el CSS oculta los bloques con `.js .reveal`, así que si
  *    esperáramos a la hidratación, en un móvil con red lenta la página se vería
  *    vacía durante segundos. Así aparecen en cuanto se parsea el HTML, y si el
@@ -79,6 +81,12 @@ try {
     : window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.classList.toggle('dark', dark);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+} catch (e) {}
+
+try {
+  if (sessionStorage.getItem('mascota') === 'oculta') {
+    document.documentElement.classList.add('sin-mascota');
+  }
 } catch (e) {}
 
 document.documentElement.classList.add('js');

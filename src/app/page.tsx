@@ -1,6 +1,7 @@
 import { Agenda } from "@/components/Agenda";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
+import { Mascota } from "@/components/Mascota";
 import { Navbar } from "@/components/Navbar";
 import { Speakers } from "@/components/Speakers";
 import { Sponsors } from "@/components/Sponsors";
@@ -34,6 +35,7 @@ export default function Home() {
         <Sponsors />
       </main>
       <Footer />
+      <Mascota />
     </>
   );
 }
