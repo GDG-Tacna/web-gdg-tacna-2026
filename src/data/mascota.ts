@@ -102,10 +102,6 @@ export function datosMascota(ahora: number): Dato[] {
 
   datos.push(
     {
-      texto: "Buscamos voluntarios para el día del evento. No necesitas experiencia previa.",
-      enlace: { label: "Quiero ser voluntario", href: site.volunteerUrl },
-    },
-    {
       texto: "¿Tu empresa quiere patrocinar el DevFest? Escríbenos.",
       enlace: { label: "Abrir WhatsApp", href: site.whatsappSponsors },
     },
