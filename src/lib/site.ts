@@ -27,8 +27,6 @@ export const site = {
 
   /** Registro de asistentes. */
   registerUrl: "https://luma.com/obkfa9kb",
-  /** Postulación para voluntarios del evento. */
-  volunteerUrl: "https://forms.gle/axZJUhvVZXLK9T1JA",
   /** Consultas sobre la experiencia premium. */
   whatsappTickets: whatsapp(
     "51952719643",

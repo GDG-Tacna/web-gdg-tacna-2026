@@ -28,7 +28,7 @@ src/
 │   ├── Agenda.tsx       Programa con filtros por track
 │   ├── Speakers.tsx     Grilla de speakers
 │   ├── Tickets.tsx      Entrada general + experiencia premium
-│   ├── Volunteers.tsx   Postulación de voluntarios
+│   ├── Volunteers.tsx   Voluntarios (postulaciones cerradas)
 │   ├── Sponsors.tsx     Grilla de logos + invitación a auspiciar
 │   ├── Pending.tsx      Estado "por confirmar" de las secciones vacías
 │   ├── Footer.tsx
@@ -61,7 +61,7 @@ sin tocar ningún componente.
 | Qué cambiar | Dónde |
 | --- | --- |
 | Fecha, hora, sede, correo, métricas del hero | `src/lib/site.ts` |
-| Enlace de registro (Luma) y de voluntarios (Forms) | `src/lib/site.ts` |
+| Enlace de registro (Luma) | `src/lib/site.ts` |
 | Charlas, horarios, tracks y salas | `src/data/agenda.ts` |
 | Speakers | `src/data/speakers.ts` |
 | Sponsors | `src/data/sponsors.ts` |
@@ -87,7 +87,7 @@ y se respetan los colores de marca. El `<Image>` usa `fill`, así que no hace
 falta declarar las dimensiones de cada logo: cualquier proporción encaja.
 
 **Botones de registro:** el CTA del hero, el "Regístrate" del nav y la entrada
-general apuntan a Luma; la sección de voluntarios, al formulario. Todos salen
+general apuntan a Luma. La sección de voluntarios ya no tiene botón: las postulaciones están cerradas. Todos salen
 de `site.ts`, así que se cambian en un sitio. El botón de la experiencia
 premium queda inerte a propósito mientras no tenga destino: basta con darle un
 `href` en `src/data/tickets.ts` para activarlo.
