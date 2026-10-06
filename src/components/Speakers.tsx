@@ -49,7 +49,8 @@ function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
               src={speaker.photo}
               alt={speaker.name}
               fill
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+              sizes="(min-width: 768px) 33vw, 50vw"
+              style={{ objectPosition: speaker.focus }}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
@@ -79,16 +80,22 @@ function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
         <h3 className="text-[17px] leading-tight font-bold tracking-[-0.01em] text-heading">
           {speaker.name}
         </h3>
-        <p className="mt-1 text-[13px] leading-snug text-muted">
-          {speaker.role}
-        </p>
-        <p className="mt-0.5 text-[13px] font-medium text-body">
-          {speaker.company}
-        </p>
+        {speaker.role && (
+          <p className="mt-1 text-[13px] leading-snug text-muted">
+            {speaker.role}
+          </p>
+        )}
+        {speaker.company && (
+          <p className="mt-0.5 text-[13px] font-medium text-body">
+            {speaker.company}
+          </p>
+        )}
 
-        <p className="mt-3 border-t-2 border-line pt-3 font-mono text-[11.5px] leading-snug text-faint">
-          {speaker.topic}
-        </p>
+        {speaker.topic && (
+          <p className="mt-3 border-t-2 border-line pt-3 font-mono text-[11.5px] leading-snug text-faint">
+            {speaker.topic}
+          </p>
+        )}
       </div>
     </article>
   );
@@ -111,7 +118,7 @@ export function Speakers() {
             las redes de la comunidad.
           </Pending>
         ) : (
-          <div className="mt-14 grid grid-cols-2 gap-x-4 gap-y-9 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-14 grid grid-cols-2 gap-x-4 gap-y-9 sm:gap-x-6 md:grid-cols-3">
             {speakers.map((speaker, index) => (
               <Reveal key={index} delay={Math.min(index * 60, 300)}>
                 <SpeakerCard speaker={speaker} index={index} />
