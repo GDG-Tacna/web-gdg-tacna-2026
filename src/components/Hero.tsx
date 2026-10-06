@@ -148,7 +148,7 @@ export function Hero() {
               as="li"
               key={stat.label}
               delay={Math.min(index * 70, 280)}
-              className={`on-color flex flex-col gap-1.5 rounded-3xl border-2 border-ink px-5 py-5 sm:px-6 sm:py-6 ${
+              className={`piso on-color flex flex-col gap-1.5 rounded-3xl border-2 border-ink px-5 py-5 sm:px-6 sm:py-6 ${
                 statFills[index % statFills.length]
               }`}
             >

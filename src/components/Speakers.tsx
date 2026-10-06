@@ -42,7 +42,7 @@ function SpeakerCard({ speaker, index }: { speaker: Speaker; index: number }) {
       */}
       <div className="relative">
         <div
-          className={`relative aspect-4/5 overflow-hidden rounded-[1.75rem] border-2 border-ink ${palette.bg}`}
+          className={`piso relative aspect-4/5 overflow-hidden rounded-[1.75rem] border-2 border-ink ${palette.bg}`}
         >
           {speaker.photo ? (
             <Image

@@ -63,7 +63,7 @@ export function Sponsors() {
 
         {/* Invitación a patrocinar */}
         <Reveal delay={140}>
-          <div className="on-color mt-6 flex flex-col items-start justify-between gap-6 rounded-[1.75rem] border-2 border-ink bg-p-blue p-7 sm:p-9 md:flex-row md:items-center">
+          <div className="piso on-color mt-6 flex flex-col items-start justify-between gap-6 rounded-[1.75rem] border-2 border-ink bg-p-blue p-7 sm:p-9 md:flex-row md:items-center">
             <div>
               <h3 className="text-2xl leading-tight font-bold tracking-[-0.02em] text-heading sm:text-[28px]">
                 ¿Quieres patrocinar el DevFest Tacna 2026?

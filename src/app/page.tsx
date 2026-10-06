@@ -12,7 +12,7 @@ import { Volunteers } from "@/components/Volunteers";
 function Divider() {
   return (
     <div className="shell" aria-hidden>
-      <div className="h-0.5 w-full bg-line" />
+      <div className="piso h-0.5 w-full bg-line" />
     </div>
   );
 }

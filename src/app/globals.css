@@ -424,8 +424,8 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Mascota (components/Mascota.tsx). Un sprite en pixel art pegado al borde
-   inferior de la ventana.
+   Mascota (components/Mascota.tsx). Un sprite en pixel art que se para sobre
+   lo que haya en pantalla; de entrada, en el borde inferior de la ventana.
 
    La hoja (public/mascota/gato.png, generada por scripts/mascota/generar.mjs)
    es una tira horizontal de cuadros de 80×100. El botón es la ventana que
@@ -458,6 +458,15 @@
   .mascota {
     --mascota-escala: 2;
   }
+}
+
+/* Parada sobre un elemento de la página deja de ser fija y se mide desde el
+   origen del documento: así el scroll la mueve con su piso, sin JS que la
+   recoloque en cada cuadro. El atributo lo pone y lo quita el componente. */
+.mascota[data-anclada] {
+  position: absolute;
+  top: 0;
+  bottom: auto;
 }
 
 /* La pone el script de layout.tsx si se ocultó en esta sesión. */
