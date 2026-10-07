@@ -7,14 +7,21 @@
 // No es parte del build: los PNG generados se commitean. Usa el `sharp` que
 // Next ya trae en node_modules, así que no añade dependencias.
 //
-// El proceso tiene tres pasos:
+// El proceso tiene cuatro pasos:
 //   1. La ilustración se reduce a una rejilla de 69×96 con una paleta fija
 //      (cada celda toma el color que más se repite dentro de ella).
-//   2. Encima van retoques a mano (`retocar`): lo que a ese tamaño no sobrevive
-//      solo, como los ojos, la boca o el dibujo del polo.
-//   3. Los cuadros de animación se derivan del cuadro base moviendo partes
-//      (`CUADROS`). El orden de esa lista es el que usa el CSS de la mascota
-//      en globals.css: si cambia aquí, hay que cambiarlo allí.
+//   2. Encima van retoques a mano (`retocar` y `cara`): lo que a ese tamaño no
+//      sobrevive solo, como los ojos, la boca o el dibujo del polo.
+//   3. La cabeza se gira hacia cada una de las miradas (`MIRADAS`): la cara es
+//      una capa aparte que se desplaza sobre el cráneo, y las pupilas dentro
+//      de los ojos.
+//   4. Los cuadros de animación se derivan de cada mirada moviendo partes
+//      (`CUADROS`).
+//
+// La hoja es una rejilla: una columna por cuadro y una fila por mirada. El
+// orden de `CUADROS` es el que usan los @keyframes de la mascota en
+// globals.css, y el de `MIRADAS` el que usa components/Mascota.tsx para
+// elegir la fila: si cambian aquí, hay que cambiarlos allí.
 
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -222,9 +229,10 @@ const OJOS = [
 
 /**
  * Paso 2. A 69×96 la reducción deja la cara y el polo irreconocibles, así que
- * se redibujan a mano siguiendo la ilustración: montura y lentes, ojos, nariz,
- * boca, mejillas y el dibujo del polo (que a este tamaño solo puede ser una
- * versión simplificada: llaves, arco, sol y las barras de colores).
+ * se redibujan a mano siguiendo la ilustración. Aquí van los restos que hay
+ * que limpiar y el dibujo del polo (que a este tamaño solo puede ser una
+ * versión simplificada: llaves, arco, sol y las barras de colores). La cara
+ * va aparte, en `cara`.
  */
 function retocar(g) {
   // Restos de la reducción alrededor de la cara.
@@ -237,6 +245,41 @@ function retocar(g) {
   fila(g, 16, 78, "p");
   fila(g, 54, 86, "..");
   fila(g, 54, 87, "....");
+  fila(g, 58, 24, ".");
+
+  // Polo: "{ DevFest }", la barra de colores, el arco con la catedral, el
+  // sol, las palmeras y la franja de iconos.
+  rect(g, 29, 45, 46, 67, "n");
+  fila(g, 30, 45, " b          b ");
+  fila(g, 30, 46, " b          b ");
+  fila(g, 30, 47, "b  bbb bbbb  b");
+  fila(g, 30, 48, " b          b ");
+  fila(g, 30, 49, " b          b ");
+  fila(g, 32, 51, "aaajjyyvvv");
+  fila(g, 32, 53, "    bb   yy");
+  fila(g, 32, 54, "   b  b  yy");
+  fila(g, 32, 55, "  b    b");
+  fila(g, 32, 56, "  b    b");
+  fila(g, 29, 57, "b b b      b b b");
+  fila(g, 29, 58, "bbb b      b bbb");
+  fila(g, 29, 59, " b  b b  b b  b ");
+  fila(g, 29, 60, " b b  b  b  b b ");
+  fila(g, 29, 61, " b b  bbbb  b b ");
+  fila(g, 29, 62, " b b  byyb  b b ");
+  fila(g, 29, 63, "bbbbbbbbbbbbbbbb");
+  fila(g, 28, 65, "aaaaajjjjyyyyvvvvv");
+  fila(g, 29, 67, "xx x xx xxx x x");
+
+  return g;
+}
+
+/**
+ * La cara en una capa propia, sin nada debajo: montura y lentes, ojos, nariz,
+ * boca y mejillas. Va aparte para poder desplazarla sobre la cabeza cuando
+ * mira hacia un lado (`girar`).
+ */
+function cara(ancho, alto) {
+  const g = crear(ancho, alto);
 
   // Hocico en crema, para dibujar encima.
   rect(g, 33, 26, 38, 28, "c");
@@ -270,7 +313,7 @@ function retocar(g) {
   fila(g, 38, 21, "aammmmeeeeemmmjjjjjjj");
   fila(g, 38, 22, "aammmeoooooemmmmjjjjj");
   fila(g, 38, 23, "aammeoobboooemmmjjjjj");
-  fila(g, 38, 24, "aammeoobboooemmmjjjj.");
+  fila(g, 38, 24, "aammeoobboooemmmjjjj");
   fila(g, 38, 25, "aammeoooooooemmjjjj");
   fila(g, 38, 26, "aammeoooooooemmjjjj");
   fila(g, 38, 27, "aaameoooooboemjjjj");
@@ -298,30 +341,77 @@ function retocar(g) {
   fila(g, 45, 33, "kkkkkk");
   fila(g, 46, 34, "kkkk");
 
-  // Polo: "{ DevFest }", la barra de colores, el arco con la catedral, el
-  // sol, las palmeras y la franja de iconos.
-  rect(g, 29, 45, 46, 67, "n");
-  fila(g, 30, 45, " b          b ");
-  fila(g, 30, 46, " b          b ");
-  fila(g, 30, 47, "b  bbb bbbb  b");
-  fila(g, 30, 48, " b          b ");
-  fila(g, 30, 49, " b          b ");
-  fila(g, 32, 51, "aaajjyyvvv");
-  fila(g, 32, 53, "    bb   yy");
-  fila(g, 32, 54, "   b  b  yy");
-  fila(g, 32, 55, "  b    b");
-  fila(g, 32, 56, "  b    b");
-  fila(g, 29, 57, "b b b      b b b");
-  fila(g, 29, 58, "bbb b      b bbb");
-  fila(g, 29, 59, " b  b b  b b  b ");
-  fila(g, 29, 60, " b b  b  b  b b ");
-  fila(g, 29, 61, " b b  bbbb  b b ");
-  fila(g, 29, 62, " b b  byyb  b b ");
-  fila(g, 29, 63, "bbbbbbbbbbbbbbbb");
-  fila(g, 28, 65, "aaaaajjjjyyyyvvvvv");
-  fila(g, 29, 67, "xx x xx xxx x x");
-
   return g;
+}
+
+// --- Miradas ------------------------------------------------------------------
+
+/**
+ * Hacia dónde puede mirar: [horizontal, vertical]. En horizontal, ±1 mueve
+ * solo los ojos y la cara, y ±2 gira además la cabeza; en vertical solo hay
+ * arriba (-1) y abajo (1). Una fila de la hoja por mirada, en este orden: la
+ * del centro, [0, 0], es la de frente.
+ */
+const MIRADAS = [];
+for (let my = -1; my <= 1; my++) for (let mx = -2; mx <= 2; mx++) MIRADAS.push([mx, my]);
+const FRENTE = MIRADAS.findIndex(([mx, my]) => mx === 0 && my === 0);
+
+/** La cabeza: todo lo que queda sobre el cuello, menos la pata en alto. */
+const esCabeza = (x, y) => y <= 37 && !(x >= 57 && y >= 36);
+
+/**
+ * Corre las pupilas dentro de los ojos. Lo que la pupila deja al descubierto
+ * es el blanco del ojo; los brillos van con ella.
+ */
+function desviar(capa, px, py) {
+  const pupila = new Set([idx("o"), idx("b")]);
+  const antes = copiar(capa);
+  for (const [x0, y0] of OJOS)
+    for (let y = y0; y < y0 + 9; y++)
+      for (let x = x0; x < x0 + 9; x++) {
+        if (!pupila.has(leer(antes, x, y))) continue;
+        const v = leer(antes, x - px, y - py);
+        poner(capa, x, y, pupila.has(v) ? v : idx("h"));
+      }
+  return capa;
+}
+
+/**
+ * Paso 3. Gira la cabeza hacia una mirada con tres capas que se mueven
+ * distinto: el cráneo (solo en ±2), la cara un píxel más que el cráneo, y las
+ * pupilas dentro de los ojos. Devuelve la rejilla y cuánto quedó desplazada
+ * la cara, que es lo que necesitan los cuadros que la redibujan.
+ */
+function girar(base, rostro, [mx, my]) {
+  const g = copiar(base);
+  const cx = Math.trunc(mx / 2);
+  if (cx) mover(g, esCabeza, () => [cx, 0]);
+
+  // Lo que la cara tapaba sobre el cráneo y, corrida, deja de tapar, se
+  // rellena con lo que hay justo al otro lado de su borde.
+  const tapa = (x, y, dx, dy) => leer(rostro, x - dx, y - dy) >= 0;
+  const pasos = [
+    [-Math.sign(mx - cx), 0],
+    [0, -Math.sign(my)],
+  ].filter(([dx, dy]) => dx || dy);
+  for (let y = 0; y < g.alto; y++)
+    for (let x = 0; x < g.ancho; x++) {
+      if (!tapa(x, y, cx, 0) || tapa(x, y, mx, my)) continue;
+      let mejor = null;
+      for (const [dx, dy] of pasos) {
+        let n = 1;
+        while (tapa(x + dx * n, y + dy * n, cx, 0)) n++;
+        if (!mejor || n < mejor.n) mejor = { n, v: leer(g, x + dx * n, y + dy * n) };
+      }
+      if (mejor) poner(g, x, y, mejor.v);
+    }
+
+  const capa = desviar(copiar(rostro), mx, my * 2);
+  for (let y = 0; y < g.alto; y++)
+    for (let x = 0; x < g.ancho; x++)
+      if (leer(capa, x, y) >= 0) poner(g, x + mx, y + my, leer(capa, x, y));
+
+  return { g, cara: [mx, my] };
 }
 
 // --- Cuadros ------------------------------------------------------------------
@@ -393,8 +483,10 @@ const pisar = (g, lado) =>
 const balancear = (g, lado, k) =>
   mover(g, esPierna(lado), (x, y) => [Math.round((k * (y - RODILLA[1])) / 15), 0]);
 
-function cerrarOjos(g) {
-  for (const [x, y] of OJOS) {
+// Los que redibujan la cara reciben cuánto está desplazada (`girar`).
+function cerrarOjos(g, [dx, dy]) {
+  for (const [x0, y0] of OJOS) {
+    const [x, y] = [x0 + dx, y0 + dy];
     rect(g, x, y, x + 8, y + 8, "m");
     fila(g, x, y + 4, "o       o");
     fila(g, x, y + 5, " ooooooo ");
@@ -402,19 +494,20 @@ function cerrarOjos(g) {
   return g;
 }
 
-function cerrarBoca(g) {
-  rect(g, 32, 32, 39, 35, "c");
+function cerrarBoca(g, [dx, dy]) {
+  rect(g, 32 + dx, 32 + dy, 39 + dx, 35 + dy, "c");
   return g;
 }
 
 /**
- * Paso 3. Un cuadro por entrada, en el orden en que quedan en la hoja. Los
+ * Paso 4. Un cuadro por entrada, en el orden en que quedan en la hoja. Los
  * @keyframes de la mascota en globals.css se refieren a ellos por posición.
+ * Cada uno recibe la rejilla ya girada y el desplazamiento de la cara.
  */
 const CUADROS = [
   /*  0 */ ["reposo", (g) => g],
   /*  1 */ ["respira", (g) => plegar(g, [CINTURA])],
-  /*  2 */ ["parpadeo", (g) => cerrarOjos(g)],
+  /*  2 */ ["parpadeo", (g, c) => cerrarOjos(g, c)],
   /*  3 */ ["saludo-fuera", (g) => saludar(g, 3)],
   /*  4 */ ["saludo-dentro", (g) => saludar(g, -2)],
   /*  5 */ ["paso-izquierdo", (g) => pisar(g, -1)],
@@ -426,8 +519,8 @@ const CUADROS = [
   /* 11 */ ["caida-a", (g) => colear(balancear(balancear(g, -1, -3), 1, 3), -3)],
   /* 12 */ ["caida-b", (g) => colear(balancear(balancear(g, -1, -2), 1, 2), -2)],
   // Los ojos se cierran antes de plegar: después ya no están en su sitio.
-  /* 13 */ ["aterrizaje", (g) => plegar(cerrarOjos(g), [CINTURA, CINTURA + 1, ...RODILLA])],
-  /* 14 */ ["boca-cerrada", (g) => cerrarBoca(g)],
+  /* 13 */ ["aterrizaje", (g, c) => plegar(cerrarOjos(g, c), [CINTURA, CINTURA + 1, ...RODILLA])],
+  /* 14 */ ["boca-cerrada", (g, c) => cerrarBoca(g, c)],
 ];
 
 // --- Salida -----------------------------------------------------------------
@@ -468,20 +561,23 @@ function pintar(celda, contorno) {
   return out;
 }
 
-async function hoja(celdas, contorno, ruta) {
-  const ancho = CELDA.ancho * celdas.length;
-  const lienzo = Buffer.alloc(ancho * CELDA.alto * 4);
-  celdas.forEach((celda, i) => {
-    const img = pintar(celda, contorno);
-    for (let y = 0; y < CELDA.alto; y++)
-      img.copy(
-        lienzo,
-        (y * ancho + i * CELDA.ancho) * 4,
-        y * CELDA.ancho * 4,
-        (y + 1) * CELDA.ancho * 4,
-      );
-  });
-  await sharp(lienzo, { raw: { width: ancho, height: CELDA.alto, channels: 4 } })
+/** Escribe la hoja: una fila de celdas por mirada, una columna por cuadro. */
+async function hoja(filas, contorno, ruta) {
+  const ancho = CELDA.ancho * filas[0].length;
+  const lienzo = Buffer.alloc(ancho * CELDA.alto * filas.length * 4);
+  filas.forEach((celdas, f) =>
+    celdas.forEach((celda, i) => {
+      const img = pintar(celda, contorno);
+      for (let y = 0; y < CELDA.alto; y++)
+        img.copy(
+          lienzo,
+          ((f * CELDA.alto + y) * ancho + i * CELDA.ancho) * 4,
+          y * CELDA.ancho * 4,
+          (y + 1) * CELDA.ancho * 4,
+        );
+    }),
+  );
+  await sharp(lienzo, { raw: { width: ancho, height: CELDA.alto * filas.length, channels: 4 } })
     .png({ palette: true, colours: 32, dither: 0, compressionLevel: 9 })
     .toFile(ruta);
 }
@@ -499,47 +595,64 @@ function mapa(g) {
 }
 
 const base = retocar(limpiar(await reducir(join(aqui, "referencia.png"))));
-const celdas = CUADROS.map(([, hacer]) => encuadrar(hacer(copiar(base))));
+const rostro = cara(base.ancho, base.alto);
+const giradas = MIRADAS.map((mirada) => girar(base, rostro, mirada));
+const filas = giradas.map(({ g, cara }) =>
+  CUADROS.map(([, hacer]) => encuadrar(hacer(copiar(g), cara))),
+);
 
 const destino = join(raiz, "public", "mascota");
 await mkdir(destino, { recursive: true });
-await hoja(celdas, [0x1e, 0x1e, 0x1e], join(destino, "gato.png"));
-await hoja(celdas, [0xf0, 0xf0, 0xf0], join(destino, "gato-oscuro.png"));
-console.log(`${celdas.length} cuadros de ${CELDA.ancho}×${CELDA.alto} → public/mascota/`);
+await hoja(filas, [0x1e, 0x1e, 0x1e], join(destino, "gato.png"));
+await hoja(filas, [0xf0, 0xf0, 0xf0], join(destino, "gato-oscuro.png"));
+console.log(
+  `${MIRADAS.length} miradas × ${CUADROS.length} cuadros de ${CELDA.ancho}×${CELDA.alto} → public/mascota/`,
+);
+
+/** Vista ampliada de unas celdas de la hoja, dadas como [columna, fila]. */
+async function lamina(origen, fondo, celdas, porFila, salida) {
+  const piezas = [];
+  for (const [i, [columna, f]] of celdas.entries())
+    piezas.push({
+      input: await sharp(origen)
+        .extract({
+          left: columna * CELDA.ancho,
+          top: f * CELDA.alto,
+          width: CELDA.ancho,
+          height: CELDA.alto,
+        })
+        .resize(CELDA.ancho * 4, CELDA.alto * 4, { kernel: "nearest" })
+        .png()
+        .toBuffer(),
+      left: (i % porFila) * CELDA.ancho * 4,
+      top: Math.floor(i / porFila) * CELDA.alto * 4,
+    });
+  await sharp({
+    create: {
+      width: Math.min(celdas.length, porFila) * CELDA.ancho * 4,
+      height: Math.ceil(celdas.length / porFila) * CELDA.alto * 4,
+      channels: 4,
+      background: fondo,
+    },
+  })
+    .composite(piezas)
+    .png()
+    .toFile(salida);
+}
 
 const vista = process.argv.indexOf("--vista");
 if (vista > 0) {
   const dir = process.argv[vista + 1];
   await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, "mapa.txt"), mapa(base));
+  await writeFile(join(dir, "mapa.txt"), mapa(giradas[FRENTE].g));
   for (const [archivo, fondo] of [
     ["gato.png", "#f0f0f0"],
     ["gato-oscuro.png", "#1e1e1e"],
   ]) {
-    // En filas de 5 cuadros para que la vista quepa en pantalla.
-    const porFila = 5;
-    const filas = Math.ceil(celdas.length / porFila);
-    const piezas = [];
-    for (let i = 0; i < celdas.length; i++)
-      piezas.push({
-        input: await sharp(join(destino, archivo))
-          .extract({ left: i * CELDA.ancho, top: 0, width: CELDA.ancho, height: CELDA.alto })
-          .resize(CELDA.ancho * 4, CELDA.alto * 4, { kernel: "nearest" })
-          .png()
-          .toBuffer(),
-        left: (i % porFila) * CELDA.ancho * 4,
-        top: Math.floor(i / porFila) * CELDA.alto * 4,
-      });
-    await sharp({
-      create: {
-        width: Math.min(celdas.length, porFila) * CELDA.ancho * 4,
-        height: filas * CELDA.alto * 4,
-        channels: 4,
-        background: fondo,
-      },
-    })
-      .composite(piezas)
-      .png()
-      .toFile(join(dir, "vista-" + archivo));
+    const origen = join(destino, archivo);
+    // Los cuadros de frente, en filas de 5 para que la vista quepa en pantalla.
+    await lamina(origen, fondo, CUADROS.map((_, i) => [i, FRENTE]), 5, join(dir, "vista-" + archivo));
+    // Las miradas, colocadas como en una brújula.
+    await lamina(origen, fondo, MIRADAS.map((_, f) => [0, f]), 5, join(dir, "miradas-" + archivo));
   }
 }
