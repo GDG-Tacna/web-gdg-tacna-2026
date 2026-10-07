@@ -428,10 +428,11 @@
    lo que haya en pantalla; de entrada, en el borde inferior de la ventana.
 
    La hoja (public/mascota/gato.png, generada por scripts/mascota/generar.mjs)
-   es una tira horizontal de cuadros de 80×100. El botón es la ventana que
-   deja ver uno solo y la tira se desplaza por detrás con `translate` a
-   saltos (`step-end`), así que la animación no repinta nada. La escala es
-   siempre un entero para que cada píxel del sprite mida lo mismo.
+   es una rejilla de cuadros de 80×100: una columna por cuadro de animación
+   y una fila por mirada. El botón es la ventana que deja ver uno solo. La
+   tira que se desplaza por detrás con `translate` a saltos (`step-end`) solo
+   mide una fila, así que la animación no repinta nada. La escala es siempre
+   un entero para que cada píxel del sprite mida lo mismo.
 
    Cuadros, en el orden de la hoja:
      0 reposo         5 paso izquierdo   10 agarrado b
@@ -440,18 +441,26 @@
      3 saludo fuera   8 cola abajo       13 aterrizaje
      4 saludo dentro  9 agarrado a       14 boca cerrada
 
+   Miradas, en el orden de las filas (5 en horizontal por 3 en vertical):
+     0–4 arriba   5–9 al centro   10–14 abajo
+   y dentro de cada grupo, de izquierda a derecha. La 7 es la de frente.
+   La fila se elige con `background-position` a partir de `--mirada`, que el
+   componente escribe al seguir al puntero. Eso sí repinta la tira, pero solo
+   cuando la mirada cambia, nunca en bucle.
+
    El reposo es CSS puro: se ve y se mueve antes de hidratar. Los demás
    estados los pone el componente en `data-estado`.
 --------------------------------------------------------------------------- */
 .mascota {
   --mascota-escala: 1;
   --mascota-ancho: calc(80px * var(--mascota-escala));
+  --mascota-alto: calc(100px * var(--mascota-escala));
   position: fixed;
   right: 1rem;
   bottom: 0;
   z-index: 40;
   width: var(--mascota-ancho);
-  height: calc(100px * var(--mascota-escala));
+  height: var(--mascota-alto);
 }
 
 @media (min-width: 1024px) {
@@ -499,7 +508,9 @@
   display: block;
   width: calc(var(--mascota-ancho) * 15);
   height: 100%;
-  background: url("/mascota/gato.png") 0 0 / 100% 100% no-repeat;
+  /* 15 filas de alto; sin `--mirada`, la de frente. */
+  background: url("/mascota/gato.png") 0 calc(var(--mascota-alto) * var(--mirada, 7) * -1) / 100%
+    1500% no-repeat;
   image-rendering: pixelated;
   /* Cuadro fijo de cada estado: es lo que se ve si no hay animación. */
   translate: calc(var(--mascota-ancho) * var(--cuadro, 0) * -1) 0;

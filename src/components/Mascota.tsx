@@ -45,6 +45,18 @@ const GLOBO_DURACION = 9000;
 /** Alto que se le reserva al globo para decidir si cabe encima. */
 const GLOBO_ALTO = 200;
 const CLAVE = "mascota";
+/** Cada cuánto avanza una mirada al girar la cabeza hacia el puntero. */
+const PASO_MIRADA = 70;
+/** Con el puntero más cerca que esto (en anchos de mascota), mira de frente. */
+const MIRADA_CERCA = 0.6;
+// Cortes sobre la dirección hacia el puntero, de -1 a 1 en cada eje: dos
+// niveles en horizontal (solo los ojos, la cabeza entera) y uno en vertical.
+const MIRADA_LADO = [0.25, 0.7];
+const MIRADA_ALTO = [0.4];
+/** Margen alrededor de un corte dentro del cual la mirada no cambia. */
+const MIRADA_HOLGURA = 0.07;
+/** Estados en los que sigue al puntero; en el resto mira de frente. */
+const ATENTA: ReadonlySet<string> = new Set(["reposo", "saludo", "cola", "salto", "habla"]);
 
 /**
  * Dónde puede pararse: los títulos, las dos piezas de una TabCard (así el
@@ -70,6 +82,18 @@ const ALCANCE = 1.5;
 
 const limitar = (valor: number, min: number, max: number) =>
   Math.min(Math.max(valor, min), Math.max(min, max));
+
+/**
+ * En qué escalón cae un valor con signo según sus cortes. Se queda en el
+ * escalón previo mientras el valor siga a menos de la holgura de él, para que
+ * la mirada no tiemble cuando el puntero ronda un corte.
+ */
+const escalon = (valor: number, cortes: number[], previo: number) => {
+  const nivel = (v: number) => Math.sign(v) * cortes.filter((corte) => Math.abs(v) > corte).length;
+  const a = nivel(valor - MIRADA_HOLGURA);
+  const b = nivel(valor + MIRADA_HOLGURA);
+  return previo >= Math.min(a, b) && previo <= Math.max(a, b) ? previo : nivel(valor);
+};
 
 const huecos = new Map<string, number>();
 let lienzo: CanvasRenderingContext2D | null | undefined;
@@ -146,9 +170,12 @@ const asentado = (piso: Element) => {
  * recolocarla en cada cuadro. Suelta, cayendo o en el borde de la ventana
  * vuelve a ser fija.
  *
- * El movimiento no pasa por estado de React: la posición y el estado viven en
- * variables del efecto y se escriben directo en el elemento, para no renderizar
- * en cada cuadro. React solo se entera de qué dice el globo.
+ * Con ratón, además sigue al puntero con la mirada: la hoja de sprites tiene
+ * una fila por dirección y aquí solo se elige cuál (`--mirada`).
+ *
+ * El movimiento no pasa por estado de React: la posición, la mirada y el
+ * estado viven en variables del efecto y se escriben directo en el elemento,
+ * para no renderizar en cada cuadro. React solo se entera de qué dice el globo.
  */
 export function Mascota() {
   const raiz = useRef<HTMLDivElement>(null);
@@ -196,6 +223,13 @@ export function Mascota() {
     } | null = null;
     let baraja: number[] = [];
     let ultimo = -1;
+    // La mirada es [horizontal de -2 a 2, vertical de -1 a 1]: la que se ve y
+    // aquella hacia la que va girando.
+    let raton: { x: number; y: number } | null = null;
+    let mirada = [0, 0];
+    let objetivo = [0, 0];
+    let giro = 0;
+    let vistazo = 0;
 
     const maxX = () => document.documentElement.clientWidth - el.offsetWidth;
     const maxAltura = () => window.innerHeight - el.offsetHeight;
@@ -266,9 +300,51 @@ export function Mascota() {
       return mejor;
     };
 
+    /** Avanza una mirada hacia el objetivo, y sigue hasta alcanzarlo. */
+    const girar = () => {
+      giro = 0;
+      const [mx, my] = mirada;
+      if (mx === objetivo[0] && my === objetivo[1]) return;
+      mirada = [mx + Math.sign(objetivo[0] - mx), my + Math.sign(objetivo[1] - my)];
+      // El orden de las filas de la hoja: ver MIRADAS en generar.mjs.
+      el.style.setProperty("--mirada", String((mirada[1] + 1) * 5 + mirada[0] + 2));
+      giro = window.setTimeout(girar, PASO_MIRADA);
+    };
+
+    /** Decide hacia dónde mirar según dónde esté el puntero respecto a la cabeza. */
+    const mirar = () => {
+      vistazo = 0;
+      let hacia = [0, 0];
+      if (raton && !puntero && ATENTA.has(estado)) {
+        const caja = el.getBoundingClientRect();
+        const dx = raton.x - (caja.left + caja.width * 0.5);
+        const dy = raton.y - (caja.top + caja.height * 0.25);
+        const lejos = Math.hypot(dx, dy);
+        // Para dejar de mirar de frente hay que alejarse un poco más de lo
+        // que hay que acercarse para que vuelva.
+        const mirando = objetivo[0] !== 0 || objetivo[1] !== 0;
+        if (lejos > caja.width * (MIRADA_CERCA + (mirando ? 0 : 0.15))) {
+          hacia = [
+            escalon(dx / lejos, MIRADA_LADO, objetivo[0]),
+            escalon(dy / lejos, MIRADA_ALTO, objetivo[1]),
+          ];
+        }
+      }
+      objetivo = hacia;
+      if (!giro) girar();
+    };
+
+    /** Pide un vistazo, como mucho uno por cuadro. Sin ratón no hay nada que mirar. */
+    const ojear = () => {
+      if (!vistazo && (raton || objetivo[0] !== 0 || objetivo[1] !== 0)) {
+        vistazo = requestAnimationFrame(mirar);
+      }
+    };
+
     const pasarA = (siguiente: Estado) => {
       estado = siguiente;
       el.dataset.estado = siguiente;
+      ojear();
       // Solo va espejada mientras camina; al parar vuelve a mirar de frente,
       // con los colores de los lentes y del polo en su orden.
       if (siguiente !== "caminar") delete el.dataset.mira;
@@ -513,6 +589,19 @@ export function Mascota() {
 
     const avisar = () => {
       if (piso && !revision) revision = requestAnimationFrame(revisar);
+      // Anclada, el scroll la mueve bajo un puntero que sigue quieto.
+      ojear();
+    };
+
+    const alApuntar = (evento: PointerEvent) => {
+      if (evento.pointerType === "touch") return;
+      raton = { x: evento.clientX, y: evento.clientY };
+      ojear();
+    };
+
+    const alSalir = () => {
+      raton = null;
+      ojear();
     };
 
     const alPulsar = (evento: PointerEvent) => {
@@ -600,6 +689,11 @@ export function Mascota() {
     document.addEventListener("pointerdown", alPulsarFuera);
     window.addEventListener("resize", alRedimensionar);
     window.addEventListener("scroll", avisar, { passive: true });
+    // Sin gestos tampoco hay seguimiento: mira siempre de frente.
+    if (!calma) {
+      window.addEventListener("pointermove", alApuntar, { passive: true });
+      document.documentElement.addEventListener("pointerleave", alSalir);
+    }
 
     // Saluda al llegar.
     if (!calma) espera = window.setTimeout(() => gesticular("saludo", 1600), 900);
@@ -607,9 +701,12 @@ export function Mascota() {
     return () => {
       interrumpir();
       cancelAnimationFrame(revision);
+      cancelAnimationFrame(vistazo);
+      clearTimeout(giro);
       clearTimeout(silencio);
       vigia.disconnect();
       delete el.dataset.anclada;
+      el.style.removeProperty("--mirada");
       cuerpo.removeEventListener("pointerdown", alPulsar);
       cuerpo.removeEventListener("pointermove", alMover);
       cuerpo.removeEventListener("pointerup", alLevantar);
@@ -619,6 +716,8 @@ export function Mascota() {
       document.removeEventListener("pointerdown", alPulsarFuera);
       window.removeEventListener("resize", alRedimensionar);
       window.removeEventListener("scroll", avisar);
+      window.removeEventListener("pointermove", alApuntar);
+      document.documentElement.removeEventListener("pointerleave", alSalir);
     };
   }, [oculta]);
 
