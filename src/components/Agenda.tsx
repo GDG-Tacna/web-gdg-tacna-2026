@@ -124,9 +124,11 @@ export function Agenda() {
                             {item.title}
                           </h3>
 
-                          <p className="mt-1.5 max-w-2xl text-[14px] leading-relaxed text-muted sm:text-[15px]">
-                            {item.description}
-                          </p>
+                          {item.description && (
+                            <p className="mt-1.5 max-w-2xl text-[14px] leading-relaxed text-muted sm:text-[15px]">
+                              {item.description}
+                            </p>
+                          )}
 
                           {(item.speaker || item.room) && (
                             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-muted">
@@ -136,9 +138,11 @@ export function Agenda() {
                                   <span className="font-medium text-body">
                                     {item.speaker.name}
                                   </span>
-                                  <span className="hidden text-faint sm:inline">
-                                    · {item.speaker.role}
-                                  </span>
+                                  {item.speaker.role && (
+                                    <span className="hidden text-faint sm:inline">
+                                      · {item.speaker.role}
+                                    </span>
+                                  )}
                                 </span>
                               )}
                               {item.room && (

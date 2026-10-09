@@ -84,14 +84,21 @@ export function datosMascota(ahora: number): Dato[] {
     });
   }
 
-  const charlas = agenda.filter((item) => item.track !== "break" && item.track !== "tbd");
+  const charlas = agenda.filter(
+    (item) => item.track !== "break" && item.track !== "cierre",
+  );
   for (const charla of charlas) {
     datos.push({ texto: `A las ${charla.time}: ${charla.title}.` });
   }
 
   const confirmados = speakers.filter((speaker) => speaker.name !== "TBD");
   for (const speaker of confirmados) {
-    datos.push({ texto: `${speaker.name} (${speaker.company}) viene con: ${speaker.topic}.` });
+    const empresa = speaker.company ? ` (${speaker.company})` : "";
+    datos.push({
+      texto: speaker.topic
+        ? `${speaker.name}${empresa} viene con: ${speaker.topic}.`
+        : `${speaker.name}${empresa} ya está confirmado en el line-up.`,
+    });
   }
 
   if (sponsors.length > 0) {
