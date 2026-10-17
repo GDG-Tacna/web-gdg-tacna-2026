@@ -97,14 +97,14 @@ export const agenda: AgendaItem[] = [
   },
   {
     time: "12:20",
-    duration: "90 min",
+    duration: "50 min",
     title: "Almuerzo / networking",
     track: "break",
     room: "Área de networking",
     speaker: { name: "Equipo GDG Tacna" },
   },
   {
-    time: "13:50",
+    time: "13:10",
     duration: "40 min",
     title:
       "Del Vibe Coding al SDD: Cómo construir Web Apps robustas con Firebase Genkit, Gemini y Devin",
@@ -113,7 +113,7 @@ export const agenda: AgendaItem[] = [
     speaker: { name: "Homer López Vidal" },
   },
   {
-    time: "14:35",
+    time: "13:55",
     duration: "40 min",
     title:
       "¿Podemos construir JARVIS hoy? Voz con Gemini Live, decisiones con JEV y Computer Use",
@@ -122,15 +122,15 @@ export const agenda: AgendaItem[] = [
     speaker: { name: "Jefferson Alfonso Vargas Espinoza" },
   },
   {
-    time: "15:20",
+    time: "14:40",
     duration: "40 min",
-    title: "Agentic Software",
+    title: "The Agentic Software Engineer: ¿Quién maneja este avión?",
     track: "charla",
     room: "Auditorio principal",
     speaker: { name: "Juan Carlos Romaina" },
   },
   {
-    time: "16:00",
+    time: "15:20",
     duration: "60 min",
     title: "Cierre y networking final",
     track: "cierre",

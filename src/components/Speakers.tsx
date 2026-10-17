@@ -118,9 +118,13 @@ export function Speakers() {
             las redes de la comunidad.
           </Pending>
         ) : (
-          <div className="mt-14 grid grid-cols-2 gap-x-4 gap-y-9 sm:gap-x-6 md:grid-cols-3">
+          <div className="mt-14 flex flex-wrap justify-center gap-x-4 gap-y-9 sm:gap-x-6">
             {speakers.map((speaker, index) => (
-              <Reveal key={index} delay={Math.min(index * 60, 300)}>
+              <Reveal
+                key={index}
+                delay={Math.min(index * 60, 300)}
+                className="basis-[calc(50%-0.5rem)] sm:basis-[calc(50%-0.75rem)] md:basis-[calc(33.333%-1rem)]"
+              >
                 <SpeakerCard speaker={speaker} index={index} />
               </Reveal>
             ))}

@@ -35,4 +35,5 @@ export const speakers: Speaker[] = [
     // Selfie 4:3 con la cara pegada al borde derecho.
     focus: "85% center",
   },
+  { name: "Juan Carlos Romaina", photo: "/speakers/invitado-07.jpeg" },
 ];
