@@ -12,7 +12,7 @@ export function Sponsors() {
     <section id="sponsors" className="relative py-20 sm:py-28">
       <div className="shell">
         <SectionHeading
-          index="05"
+          index="04"
           eyebrow="Sponsors"
           title="Las empresas que hacen posible el DevFest"
           description="Gracias a ellas la entrada general es gratuita. Si tu empresa quiere sumarse a la edición 2026, hay espacio para ti."

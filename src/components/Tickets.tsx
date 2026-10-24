@@ -39,7 +39,9 @@ function PlanCard({ plan }: { plan: Plan }) {
           </span>
         )}
       </div>
-      <p className="mt-3 font-mono text-[12px] text-faint">{plan.priceNote}</p>
+      {plan.priceNote && (
+        <p className="mt-3 font-mono text-[12px] text-faint">{plan.priceNote}</p>
+      )}
 
       <p className="mt-8 border-t-2 border-line pt-6 font-mono text-[11px] font-semibold tracking-[0.12em] text-faint uppercase">
         {plan.includesTitle}

@@ -6,7 +6,8 @@ export type Plan = {
   price: string;
   /** Precio anterior, tachado al lado. Para mostrar el descuento de preventa. */
   compareAt?: string;
-  priceNote: string;
+  /** Opcional: aclaración bajo el precio, si hace falta alguna. */
+  priceNote?: string;
   /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado"). */
   highlight?: string;
   featured?: boolean;
@@ -49,9 +50,6 @@ export const plans: Plan[] = [
     description:
       "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
     price: "S/ 49",
-    compareAt: "S/ 59",
-    priceNote: "Precio de preventa hasta el 15 de octubre",
-    highlight: "Preventa",
     featured: true,
     includesTitle: "Qué incluye:",
     includes: [

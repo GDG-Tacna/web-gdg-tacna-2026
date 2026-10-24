@@ -59,14 +59,15 @@ export function datosMascota(ahora: number): Dato[] {
 
   const general = plans.find((plan) => plan.id === "general");
   if (general) {
+    const nota = general.priceNote ? ` ${general.priceNote}.` : "";
     datos.push({
-      texto: `${general.badge}: ${general.price}. ${general.priceNote}.`,
+      texto: `${general.badge}: ${general.price}.${nota}`,
       enlace: general.href ? { label: general.cta, href: general.href } : undefined,
     });
   }
 
-  // De la premium solo lo que incluye. El precio y la fecha de preventa se
-  // quedan en la tarjeta de entradas, que es donde se mantienen al día.
+  // De la premium solo lo que incluye. El precio se queda en la tarjeta de
+  // entradas, que es donde se mantiene al día.
   const premium = plans.find((plan) => plan.id === "premium");
   if (premium) {
     for (const grupo of trozos(premium.includes, 3)) {
