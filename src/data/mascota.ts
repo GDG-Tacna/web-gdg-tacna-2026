@@ -66,6 +66,15 @@ export function datosMascota(ahora: number): Dato[] {
     });
   }
 
+  const pro = plans.find((plan) => plan.id === "pro");
+  if (pro) {
+    const nota = pro.priceNote ? ` ${pro.priceNote}.` : "";
+    datos.push({
+      texto: `${pro.badge}: ${pro.price}.${nota}`,
+      enlace: pro.href ? { label: pro.cta, href: pro.href } : undefined,
+    });
+  }
+
   // De la premium solo lo que incluye. El precio se queda en la tarjeta de
   // entradas, que es donde se mantiene al día.
   const premium = plans.find((plan) => plan.id === "premium");

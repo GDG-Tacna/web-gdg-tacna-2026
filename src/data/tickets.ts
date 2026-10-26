@@ -11,6 +11,11 @@ export type Plan = {
   /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado"). */
   highlight?: string;
   featured?: boolean;
+  /**
+   * Relleno de la tarjeta. Si es un color de la paleta (y no un token de
+   * superficie), añadir `on-color`. Por defecto, la superficie del tema.
+   */
+  fill?: string;
   includesTitle: string;
   includes: string[];
   cta: string;
@@ -44,13 +49,36 @@ export const plans: Plan[] = [
     href: site.registerUrl,
   },
   {
+    id: "pro",
+    badge: "Entrada PRO",
+    name: "Certifica tu participación",
+    description:
+      "La entrada general con certificado de participación, bolsa de regalos y sorteos. Para llevarte algo más que las charlas.",
+    price: "S/ 19",
+    priceNote: "Pago único · inscripción por WhatsApp",
+    fill: "on-color bg-p-blue",
+    includesTitle: "Qué incluye:",
+    includes: [
+      "Acceso a todas las charlas del día",
+      "Zona de sponsors y espacios de networking",
+      "Bolsa de regalos",
+      "Obsequios y sorteos en el evento",
+      "Certificado de participación",
+    ],
+    cta: "Contáctanos",
+    ctaNote: "Se abre un chat de WhatsApp.",
+    href: site.whatsappPro,
+  },
+  {
     id: "premium",
     badge: "Experiencia premium",
     name: "Llévate el merch del DevFest",
     description:
       "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
-    price: "S/ 49",
+    price: "S/ 59",
+    priceNote: "Pago único · inscripción por WhatsApp",
     featured: true,
+    fill: "on-color bg-p-yellow",
     includesTitle: "Qué incluye:",
     includes: [
       "Acceso a conferencias y talleres",

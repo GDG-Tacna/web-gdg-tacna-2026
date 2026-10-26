@@ -9,14 +9,14 @@ function PlanCard({ plan }: { plan: Plan }) {
   return (
     <TabCard
       tab={plan.badge}
-      // El plan destacado va sobre amarillo pastel, como un sticker de la
-      // guía; el general, sobre la superficie del tema.
-      fill={plan.featured ? "on-color bg-p-yellow" : "bg-panel"}
+      // El color de cada plan vive en los datos: pastel de la guía, como un
+      // sticker, o la superficie del tema si no tiene.
+      fill={plan.fill ?? "bg-panel"}
       className="h-full"
-      bodyClassName="flex flex-col p-6 sm:p-9"
+      bodyClassName="flex flex-col p-6 sm:p-9 lg:p-7 xl:p-9"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="max-w-sm text-2xl leading-tight font-bold tracking-[-0.02em] text-balance text-heading sm:text-[28px]">
+        <h3 className="max-w-sm text-2xl leading-tight font-bold tracking-[-0.02em] text-balance text-heading sm:text-[28px] lg:min-h-[2lh]">
           {plan.name}
         </h3>
         {plan.highlight && (
@@ -25,12 +25,14 @@ function PlanCard({ plan }: { plan: Plan }) {
           </span>
         )}
       </div>
-      <p className="mt-2.5 max-w-md text-[15px] leading-relaxed text-muted">
+      {/* Mismo criterio que la nota de precio: entre lg y xl las columnas son
+          angostas y una descripción puede partirse en 4 líneas. */}
+      <p className="mt-2.5 max-w-md text-[15px] leading-relaxed text-muted lg:min-h-[4lh] xl:min-h-[3lh]">
         {plan.description}
       </p>
 
       <div className="mt-8 flex flex-wrap items-end gap-3">
-        <span className="text-6xl leading-[0.9] font-bold tracking-[-0.045em] text-heading sm:text-7xl">
+        <span className="text-6xl leading-[0.9] font-bold tracking-[-0.045em] text-heading sm:text-7xl lg:text-6xl xl:text-7xl">
           {plan.price}
         </span>
         {plan.compareAt && (
@@ -39,8 +41,14 @@ function PlanCard({ plan }: { plan: Plan }) {
           </span>
         )}
       </div>
+      {/* En escritorio las tarjetas van en fila: se reservan dos líneas para
+          que "Qué incluye" arranque a la misma altura aunque una nota se
+          parta en dos. Si un plan no tiene nota, no hay hueco que reservar en
+          esa tarjeta, así que las demás deberían quedarse sin ella también. */}
       {plan.priceNote && (
-        <p className="mt-3 font-mono text-[12px] text-faint">{plan.priceNote}</p>
+        <p className="mt-3 font-mono text-[12px] text-faint lg:min-h-[2lh]">
+          {plan.priceNote}
+        </p>
       )}
 
       <p className="mt-8 border-t-2 border-line pt-6 font-mono text-[11px] font-semibold tracking-[0.12em] text-faint uppercase">
@@ -97,10 +105,10 @@ export function Tickets() {
           index="03"
           eyebrow="Entradas"
           title="Elige tu experiencia DevFest"
-          description="La conferencia es gratuita. Si quieres llevarte el merch del evento, suma la experiencia premium."
+          description="La conferencia es gratuita. Si quieres certificado, bolsa de regalos y sorteos, elige la entrada PRO; y si además quieres el polo y las comidas del día, suma la experiencia premium."
         />
 
-        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-2">
+        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
           {plans.map((plan, index) => (
             <Reveal key={plan.id} delay={index * 120} className="h-full">
               <PlanCard plan={plan} />

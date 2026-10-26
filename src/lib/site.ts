@@ -32,6 +32,11 @@ export const site = {
     "51952719643",
     "Hola, quiero información sobre la experiencia premium del DevFest Tacna 2026.",
   ),
+  /** Consultas sobre la entrada PRO. */
+  whatsappPro: whatsapp(
+    "51952719643",
+    "Hola, quiero información sobre la entrada PRO del DevFest Tacna 2026.",
+  ),
   /** Consultas de empresas que quieran patrocinar. */
   whatsappSponsors: whatsapp(
     "51970200083",
