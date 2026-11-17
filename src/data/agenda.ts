@@ -1,4 +1,9 @@
-export type TrackId = "keynote" | "charla" | "break" | "cierre";
+export type TrackId =
+  | "keynote"
+  | "charla"
+  | "dinamica"
+  | "break"
+  | "cierre";
 
 export type Track = {
   id: TrackId;
@@ -21,6 +26,11 @@ export const tracks: Record<TrackId, Track> = {
     id: "charla",
     label: "Charla",
     chip: "border-coal bg-p-blue text-coal",
+  },
+  dinamica: {
+    id: "dinamica",
+    label: "Dinámica",
+    chip: "border-coal bg-p-yellow text-coal",
   },
   break: {
     id: "break",
@@ -74,10 +84,10 @@ export const agenda: AgendaItem[] = [
   {
     time: "10:40",
     duration: "15 min",
-    title: "Pausa para el café",
+    title: "Coffee Break",
+    description: "Networking",
     track: "break",
     room: "Vestíbulo principal",
-    speaker: { name: "Equipo GDG Tacna" },
   },
   {
     time: "10:55",
@@ -90,39 +100,44 @@ export const agenda: AgendaItem[] = [
   {
     time: "11:40",
     duration: "40 min",
-    title: "Automatización inteligente: GitHub Actions + Firebase",
+    title: "Automatización Inteligente: GitHub Actions + Firebase",
     track: "charla",
     room: "Auditorio principal",
     speaker: { name: "Eduardo Ormeño Meneses" },
   },
   {
     time: "12:20",
-    duration: "50 min",
-    title: "Almuerzo / networking",
+    duration: "90 min",
+    title: "Almuerzo & Networking",
     track: "break",
-    room: "Área de networking",
+    room: "Área de Networking",
+  },
+  {
+    time: "13:50",
+    duration: "15 min",
+    title: "Dinámica: Nombrando a nuestra Mascota",
+    track: "dinamica",
+    room: "Auditorio principal",
     speaker: { name: "Equipo GDG Tacna" },
   },
   {
-    time: "13:10",
+    time: "14:05",
     duration: "40 min",
-    title:
-      "Del Vibe Coding al SDD: Cómo construir Web Apps robustas con Firebase Genkit, Gemini y Devin",
+    title: "Del Vibe Coding al SDD: Web Apps con Genkit, Gemini y Devin",
     track: "charla",
     room: "Auditorio principal",
     speaker: { name: "Homer López Vidal" },
   },
   {
-    time: "13:55",
+    time: "14:45",
     duration: "40 min",
-    title:
-      "¿Podemos construir JARVIS hoy? Voz con Gemini Live, decisiones con JEV y Computer Use",
+    title: "¿Podemos construir JARVIS hoy? Voz y Computer Use",
     track: "charla",
     room: "Auditorio principal",
-    speaker: { name: "Jefferson Alfonso Vargas Espinoza" },
+    speaker: { name: "Jefferson Vargas Espinoza" },
   },
   {
-    time: "14:40",
+    time: "15:25",
     duration: "40 min",
     title: "The Agentic Software Engineer: ¿Quién maneja este avión?",
     track: "charla",
@@ -130,11 +145,12 @@ export const agenda: AgendaItem[] = [
     speaker: { name: "Juan Carlos Romaina" },
   },
   {
-    time: "15:20",
+    time: "16:05",
     duration: "60 min",
-    title: "Cierre y networking final",
+    title: "Cierre y Agradecimientos",
     track: "cierre",
     room: "Auditorio principal / vestíbulo",
+    speaker: { name: "Equipo GDG Tacna" },
   },
 ];
 
@@ -146,7 +162,13 @@ export const agenda: AgendaItem[] = [
  * añadir esos tracks y dejarlos fuera de esta lista: la fila de filtros, el
  * estado activo y el filtrado vuelven solos.
  */
-const sinFiltro: TrackId[] = ["keynote", "charla", "break", "cierre"];
+const sinFiltro: TrackId[] = [
+  "keynote",
+  "charla",
+  "dinamica",
+  "break",
+  "cierre",
+];
 
 /**
  * Filtros derivados de la agenda: solo aparecen los tracks que realmente
