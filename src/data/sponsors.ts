@@ -23,4 +23,5 @@ export const sponsors: Sponsor[] = [
   { name: "HERZ", logo: "/sponsors/herz.jpeg", frame: "square" },
   { name: "MUSO", logo: "/sponsors/muso.jpeg", frame: "square" },
   { name: "Louis3D", logo: "/sponsors/louis-3d.jpeg", frame: "square" },
+  { name: "Mijo Store", logo: "/sponsors/logo-mijo-store.png", frame: "square" },
 ];
