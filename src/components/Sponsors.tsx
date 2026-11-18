@@ -4,8 +4,31 @@ import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
 import { TabCard } from "./TabCard";
 import { ArrowIcon } from "./icons";
-import { sponsors } from "@/data/sponsors";
+import { sponsors, type SponsorFrame } from "@/data/sponsors";
 import { site } from "@/lib/site";
+
+const frameConfig: Record<
+  SponsorFrame,
+  { wrapper: string; image: string; sizes: string }
+> = {
+  plain: {
+    wrapper: "h-24 w-full",
+    image: "object-contain",
+    sizes: "(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw",
+  },
+  square: {
+    wrapper:
+      "size-28 sm:size-32 overflow-hidden rounded-[1.25rem] border-2 border-ink",
+    image: "object-cover",
+    sizes: "(min-width: 640px) 128px, 112px",
+  },
+  circle: {
+    wrapper:
+      "size-28 sm:size-32 overflow-hidden rounded-full border-2 border-ink",
+    image: "object-cover",
+    sizes: "(min-width: 640px) 128px, 112px",
+  },
+};
 
 export function Sponsors() {
   return (
@@ -38,24 +61,30 @@ export function Sponsors() {
                 dejaba pegados a la izquierda con columnas vacías al lado. Así
                 se centran sea cual sea la cantidad.
               */}
-              <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 px-6 py-9 sm:px-10 sm:py-12">
-                {sponsors.map((sponsor) => (
-                  <li
-                    key={sponsor.name}
-                    className="w-full max-w-[280px] sm:basis-[calc(50%-1.25rem)] lg:basis-[calc(33.333%-1.7rem)]"
-                  >
-                    {/* `fill` evita tener que declarar las dimensiones de cada logo. */}
-                    <div className="relative h-24 w-full transition-transform duration-300 hover:scale-[1.04]">
-                      <Image
-                        src={sponsor.logo}
-                        alt={sponsor.name}
-                        fill
-                        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
-                        className="object-contain"
-                      />
-                    </div>
-                  </li>
-                ))}
+              <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 px-6 py-9 sm:gap-y-10 sm:px-10 sm:py-12">
+                {sponsors.map((sponsor) => {
+                  const frame = frameConfig[sponsor.frame ?? "plain"];
+
+                  return (
+                    <li
+                      key={sponsor.name}
+                      className="flex w-full max-w-[280px] justify-center sm:basis-[calc(50%-1.25rem)] lg:basis-[calc(33.333%-1.7rem)]"
+                    >
+                      {/* `fill` evita tener que declarar las dimensiones de cada logo. */}
+                      <div
+                        className={`relative transition-transform duration-300 hover:scale-[1.04] ${frame.wrapper}`}
+                      >
+                        <Image
+                          src={sponsor.logo}
+                          alt={sponsor.name}
+                          fill
+                          sizes={frame.sizes}
+                          className={frame.image}
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </TabCard>
           </Reveal>
