@@ -6,6 +6,8 @@ import { plans, type Plan } from "@/data/tickets";
 import { site } from "@/lib/site";
 
 function PlanCard({ plan }: { plan: Plan }) {
+  const isSoldOut = Boolean(plan.soldOut);
+
   return (
     <TabCard
       tab={plan.badge}
@@ -13,10 +15,16 @@ function PlanCard({ plan }: { plan: Plan }) {
       // sticker, o la superficie del tema si no tiene.
       fill={plan.fill ?? "bg-panel"}
       className="h-full"
-      bodyClassName="flex flex-col p-6 sm:p-9 lg:p-7 xl:p-9"
+      bodyClassName={`flex flex-col p-6 sm:p-9 lg:p-7 xl:p-9 ${
+        isSoldOut ? "select-none" : ""
+      }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="max-w-sm text-2xl leading-tight font-bold tracking-[-0.02em] text-balance text-heading sm:text-[28px] lg:min-h-[2lh]">
+        <h3
+          className={`max-w-sm text-2xl leading-tight font-bold tracking-[-0.02em] text-balance text-heading sm:text-[28px] lg:min-h-[2lh] ${
+            isSoldOut ? "opacity-70" : ""
+          }`}
+        >
           {plan.name}
         </h3>
         {plan.highlight && (
@@ -27,12 +35,20 @@ function PlanCard({ plan }: { plan: Plan }) {
       </div>
       {/* Mismo criterio que la nota de precio: entre lg y xl las columnas son
           angostas y una descripción puede partirse en 4 líneas. */}
-      <p className="mt-2.5 max-w-md text-[15px] leading-relaxed text-muted lg:min-h-[4lh] xl:min-h-[3lh]">
+      <p
+        className={`mt-2.5 max-w-md text-[15px] leading-relaxed text-muted lg:min-h-[4lh] xl:min-h-[3lh] ${
+          isSoldOut ? "opacity-70" : ""
+        }`}
+      >
         {plan.description}
       </p>
 
       <div className="mt-8 flex flex-wrap items-end gap-3">
-        <span className="text-6xl leading-[0.9] font-bold tracking-[-0.045em] text-heading sm:text-7xl lg:text-6xl xl:text-7xl">
+        <span
+          className={`text-6xl leading-[0.9] font-bold tracking-[-0.045em] text-heading sm:text-7xl lg:text-6xl xl:text-7xl ${
+            isSoldOut ? "line-through opacity-55" : ""
+          }`}
+        >
           {plan.price}
         </span>
         {plan.compareAt && (
@@ -54,7 +70,9 @@ function PlanCard({ plan }: { plan: Plan }) {
       <p className="mt-8 border-t-2 border-line pt-6 font-mono text-[11px] font-semibold tracking-[0.12em] text-faint uppercase">
         {plan.includesTitle}
       </p>
-      <ul className="mt-4 flex flex-col gap-3">
+      <ul
+        className={`mt-4 flex flex-col gap-3 ${isSoldOut ? "opacity-65" : ""}`}
+      >
         {plan.includes.map((item) => (
           <li key={item} className="flex items-start gap-3">
             <span className="mt-px grid size-[22px] shrink-0 place-items-center rounded-full border-[1.5px] border-ink bg-h-green text-coal">
@@ -66,7 +84,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       </ul>
 
       <div className="mt-auto flex flex-col gap-3 pt-9">
-        {plan.href ? (
+        {plan.href && !isSoldOut ? (
           <a
             href={plan.href}
             target="_blank"
@@ -79,11 +97,12 @@ function PlanCard({ plan }: { plan: Plan }) {
             <ArrowIcon className="transition-transform group-hover/cta:translate-x-1" />
           </a>
         ) : (
-          // Sin destino todavía: el botón queda inerte a propósito.
+          // Plan agotado o sin destino: botón deshabilitado para impedir la selección.
           <button
             type="button"
+            disabled
             aria-disabled="true"
-            className="w-full rounded-full border-2 border-dashed border-line-2 px-6 py-4 text-[15px] font-semibold text-muted"
+            className="w-full cursor-not-allowed rounded-full border-2 border-dashed border-ink/40 bg-black/5 px-6 py-4 font-mono text-[14px] font-semibold tracking-[0.06em] text-muted uppercase"
           >
             {plan.cta}
           </button>

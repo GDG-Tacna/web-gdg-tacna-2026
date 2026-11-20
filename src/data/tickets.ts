@@ -8,9 +8,11 @@ export type Plan = {
   compareAt?: string;
   /** Opcional: aclaración bajo el precio, si hace falta alguna. */
   priceNote?: string;
-  /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado"). */
+  /** Etiqueta destacada sobre la tarjeta (ej. "Recomendado", "Agotado"). */
   highlight?: string;
   featured?: boolean;
+  /** Marca el plan como agotado y deshabilita su selección. */
+  soldOut?: boolean;
   /**
    * Relleno de la tarjeta. Si es un color de la paleta (y no un token de
    * superficie), añadir `on-color`. Por defecto, la superficie del tema.
@@ -76,8 +78,10 @@ export const plans: Plan[] = [
     description:
       "Un extra sobre la entrada general para quienes quieran llevarse un recuerdo del evento.",
     price: "S/ 59",
-    priceNote: "Pago único · inscripción por WhatsApp",
+    priceNote: "Cupos agotados · no disponible",
+    highlight: "Agotado",
     featured: true,
+    soldOut: true,
     fill: "on-color bg-p-yellow",
     includesTitle: "Qué incluye:",
     includes: [
@@ -89,8 +93,7 @@ export const plans: Plan[] = [
       "Obsequios y sorteos en el evento",
       "Certificado de participación",
     ],
-    cta: "Contáctanos",
-    ctaNote: "Se abre un chat de WhatsApp.",
-    href: site.whatsappTickets,
+    cta: "Agotado",
+    ctaNote: "Se agotaron los cupos para esta experiencia.",
   },
 ];
