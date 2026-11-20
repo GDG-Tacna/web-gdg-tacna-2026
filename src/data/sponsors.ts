@@ -13,7 +13,7 @@ export type Sponsor = {
 export const sponsors: Sponsor[] = [
   { name: "Universidad Tecnológica del Perú", logo: "/sponsors/utp.webp" },
   { name: "JetBrains", logo: "/sponsors/jetbrains.svg" },
-  { name: "Blu Café", logo: "/sponsors/blu-cafe.jpeg", frame: "circle" },
+  { name: "Grupo Lacume", logo: "/sponsors/grupo-lacume.jpeg" },
   { name: "Bub-ble Tea", logo: "/sponsors/bub-ble-tea.jpeg", frame: "square" },
   {
     name: "The Dome Scoop Store",
@@ -24,4 +24,5 @@ export const sponsors: Sponsor[] = [
   { name: "MUSO", logo: "/sponsors/muso.jpeg", frame: "square" },
   { name: "Louis3D", logo: "/sponsors/louis-3d.jpeg", frame: "square" },
   { name: "Mijo Store", logo: "/sponsors/logo-mijo-store.png", frame: "square" },
+  { name: "Blu Café", logo: "/sponsors/blu-cafe.jpeg", frame: "circle" },
 ];
